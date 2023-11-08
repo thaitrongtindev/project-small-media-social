@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "602984123441",
+    "project_id": "social-media-small",
+    "storage_bucket": "social-media-small.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:602984123441:android:72e5b4e12702cfa2df1910",
+        "android_client_info": {
+          "package_name": "com.example.socialmediasmall"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDm_5_baNbUzB7HDKlibjHSW84BgsOK3GY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
