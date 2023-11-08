@@ -24,6 +24,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.socialmediasmall.ForgotPasswordActivity;
 import com.example.socialmediasmall.MainActivity;
 import com.example.socialmediasmall.R;
 import com.facebook.AccessToken;
@@ -69,6 +70,7 @@ public class LoginFragment extends Fragment {
     private static final int RC_SIGN_IN = 9001;
 
     private CallbackManager callbackManager;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -146,7 +148,17 @@ public class LoginFragment extends Fragment {
                 clickFacebookLogin();
             }
         });
+        
+        forgotPasswordTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clickForgotPassword();
+            }
+        });
+    }
 
+    private void clickForgotPassword() {
+        startActivity(new Intent(getContext().getApplicationContext(), ForgotPasswordActivity.class));
     }
 
     private void clickFacebookLogin() {
@@ -291,6 +303,7 @@ public class LoginFragment extends Fragment {
                     userProfile(mUser);
                 } else {
                     // progressDialog.dismiss();
+
                     Toast.makeText(getContext().getApplicationContext(), "Login Fail", Toast.LENGTH_SHORT).show();
                 }
 
@@ -343,6 +356,9 @@ public class LoginFragment extends Fragment {
 
                             sendUserToMainActivity();
 
+                        } else {
+                            progressBar.setVisibility(View.GONE);
+                            Log.e("LOGIN", task.getException().toString() );
                         }
                     }
                 });

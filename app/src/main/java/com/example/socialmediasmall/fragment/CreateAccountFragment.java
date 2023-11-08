@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,8 +33,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
-
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class CreateAccountFragment extends Fragment {
@@ -40,16 +43,17 @@ public class CreateAccountFragment extends Fragment {
     private EditText nameEdt, emailEdt, passwordEdt, confirmPasswordEdt;
     private TextView loginTv;
     private Button signUpBtn;
+    private FrameLayout frameLayout;
     private FirebaseAuth mAuth;
     private ProgressBar progressBar;
- //   private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
-   // private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+    private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN);
 
-//    public static boolean isValidEmail(String email) {
-//        Matcher matcher = pattern.matcher(email);
-//        return matcher.matches();
-//    }
+    public static boolean isValidEmail(String email) {
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
 
     public CreateAccountFragment() {
         // Required empty public constructor
@@ -86,11 +90,32 @@ public class CreateAccountFragment extends Fragment {
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 String name = nameEdt.getText().toString().trim();
                 String email = emailEdt.getText().toString().trim();
                 String password = passwordEdt.getText().toString().trim();
-                String confirmPassword = confirmPasswordEdt.getText().toString().trim();
+                String confirmPassword = passwordEdt.getText().toString().trim();
 
+                if (name.isEmpty() || name.equals(" ")) {
+                    nameEdt.setError("Please input valid name");
+                    return;
+                }
+//                if (!isValidEmail(EMAIL_PATTERN) || email.isEmpty()) {
+//                    emailEdt.setError("Please input valid email");
+//                    return;
+//                }
+
+                if (password.length() < 6 || password.isEmpty()) {
+
+                        passwordEdt.setError("Please input valid password");
+                        return;
+                    }
+
+
+                if (confirmPassword.isEmpty() || !confirmPassword.equals(password)) {
+                    confirmPasswordEdt.setError("Password no match");
+                    return;
+                }
 
                 progressBar.setVisibility(View.VISIBLE);
                 createAccount(email, password, name);
@@ -100,29 +125,6 @@ public class CreateAccountFragment extends Fragment {
     }
 
     private void createAccount(String email, String password, String name) {
-//        mAuth.createUserWithEmailAndPassword(email, password)
-//                .addOnCompleteListener(this,new OnCompleteListener<AuthResult>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<AuthResult> task) {
-//
-//                        if (task.isSuccessful()) {
-//                            progressBar.setVisibility(View.GONE);
-//                            Toast.makeText(getContext(), "Create account success", Toast.LENGTH_SHORT).show();
-//                            FirebaseUser user = mAuth.getCurrentUser();
-//                            Log.e("USEREmail", user.getDisplayName());
-//                            user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                @Override
-//                                public void onComplete(@NonNull Task<Void> task) {
-//                                    Toast.makeText(getContext(), "Email verification link send", Toast.LENGTH_SHORT).show();
-//                                }
-//                            });
-//                            uploadUser(user, name, email);
-//                        } else {
-//                            Toast.makeText(getContext(), ""+task.getException(),Toast.LENGTH_SHORT).show();
-//                            Log.e("Task" , task.getException().toString() );
-//                        }
-//                    }
-//                });
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(requireActivity(),new OnCompleteListener<AuthResult>() {
                     @Override
@@ -164,8 +166,16 @@ public class CreateAccountFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            startActivity(new Intent(getContext().getApplicationContext(), MainActivity.class));
-                            getActivity().finish();
+                            // Tạo một thể hiện của LoginFragment
+                            LoginFragment loginFragment = new LoginFragment();
+
+// Sử dụng FragmentManager và FragmentTransaction để thêm LoginFragment vào hoạt động hiện tại
+                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            fragmentTransaction.replace(frameLayout.getId(), loginFragment); // R.id.fragment_container là ID của một ViewGroup trong layout XML của hoạt động chứa Fragment
+                            fragmentTransaction.addToBackStack(null); // Tùy chọn: Để thêm LoginFragment vào ngăn xếp lưu trữ Fragment
+                            fragmentTransaction.commit();
+
                         } else {
                             Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
                         }
@@ -183,5 +193,7 @@ public class CreateAccountFragment extends Fragment {
         signUpBtn = view.findViewById(R.id.signUpBtn);
         progressBar = view.findViewById(R.id.progressbar);
         mAuth = FirebaseAuth.getInstance();
+
+        frameLayout = view.findViewById(R.id.framelayout);
     }
 }
