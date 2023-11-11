@@ -19,11 +19,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.socialmediasmall.DataLocalManager;
 import com.example.socialmediasmall.ForgotPasswordActivity;
 import com.example.socialmediasmall.MainActivity;
 import com.example.socialmediasmall.R;
@@ -51,7 +53,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 
 public class LoginFragment extends Fragment {
@@ -153,6 +157,34 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 clickForgotPassword();
+            }
+        });
+
+        //checkbox
+        rememberCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    Toast.makeText(getContext().getApplicationContext(), "" + isChecked, Toast.LENGTH_SHORT).show();
+                    String email = emailEdt.getText().toString().trim();
+                    String pass = passwordEdt.getText().toString().trim();
+                    // neu user check remember
+                    Set<String> remember = new HashSet<>();
+                    remember.add(email);
+                    remember.add(pass);
+
+                    DataLocalManager.setStringValue(remember);
+                } else {
+
+                }
+            }
+        });
+
+        emailEdt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               Set<String> data = DataLocalManager.getStringValue();
+               emailEdt.setText(data.toString());
             }
         });
     }
@@ -379,6 +411,7 @@ public class LoginFragment extends Fragment {
         facebookSignUpBtn = view.findViewById(R.id.facebookLoginBtn);
         googleSignUpBtn = view.findViewById(R.id.googleLoginBtn);
         loginBtn = view.findViewById(R.id.loginBtn);
+        rememberCheckBox = view.findViewById(R.id.checkboxRememberPass);
 
         progressBar = view.findViewById(R.id.progress_login);
         progressDialog = new ProgressDialog(getContext());

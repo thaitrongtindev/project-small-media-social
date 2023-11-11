@@ -57,5 +57,11 @@ dependencies {
     //facebook
     implementation 'com.facebook.android:facebook-login:5.15.3'
 
+    //glide
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    //circle imageview
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+
 
 }
