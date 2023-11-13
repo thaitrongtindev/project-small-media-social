@@ -2,6 +2,7 @@ package com.example.socialmediasmall.adapter;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -14,13 +15,12 @@ import com.example.socialmediasmall.fragment.SearchFragment;
 
 public class ViewPagerAdapter extends FragmentStateAdapter {
 
-    private int noOfTabs;
+    //private int noOfTabs = 4;
 
-    public ViewPagerAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, int noOfTabs) {
-        super(fragmentManager, lifecycle);
-        this.noOfTabs = noOfTabs;
+    public ViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
+        super(fragmentActivity);
+
     }
-
 
     @NonNull
     @Override
@@ -44,6 +44,6 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return noOfTabs;
+        return 5;
     }
 }

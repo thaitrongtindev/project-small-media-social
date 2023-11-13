@@ -22,4 +22,7 @@
     <string name="sign_in_with_facebook">Sign in with Facebook</string>
     <string name="default_web_client_id">602984123441-kqffvmaailpqvkrs29con2b3vtn87ufq.apps.googleusercontent.com</string>
     <string name="forgot_pasword">Forgot Pasword</string>
+    <string name="username">Username</string>
+    <string name="_2h">2h</string>
+    <string name="_100_likes">100 Likes</string>
 </resources>
