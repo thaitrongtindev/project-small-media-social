@@ -1,14 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="8dp"
     tools:context=".fragment.AddFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
+        android:id="@+id/layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="?attr/actionBarSize">
 
-</FrameLayout>
+        <ImageButton
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="@drawable/ic_back"
+            android:id="@+id/backBtn"/>
+
+        <ImageButton
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="@drawable/ic_next"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/nextBtn"/>
+
+
+    </RelativeLayout>
+    <EditText
+        android:id="@+id/descriptionET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:layout_below="@id/layout"
+        android:background="@android:color/transparent"
+        android:hint="@string/add_something_about_this_post"
+        android:maxLines="12" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_below="@id/descriptionET"
+        android:background="@color/colorAccent"
+        android:contentDescription="@string/app_name"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imageView" />
+
+</RelativeLayout>
