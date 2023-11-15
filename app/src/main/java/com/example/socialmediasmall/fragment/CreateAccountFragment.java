@@ -1,6 +1,5 @@
 package com.example.socialmediasmall.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,10 +19,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.socialmediasmall.FragmentReplaceActivity;
-import com.example.socialmediasmall.MainActivity;
 import com.example.socialmediasmall.R;
-import com.example.socialmediasmall.fragment.LoginFragment;
+import com.example.socialmediasmall.ReplacerActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -83,7 +80,7 @@ public class CreateAccountFragment extends Fragment {
         loginTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((FragmentReplaceActivity) getActivity()).setFragment(new LoginFragment());
+                ((ReplacerActivity) getActivity()).setFragment(new LoginFragment());
             }
         });
 
@@ -159,6 +156,9 @@ public class CreateAccountFragment extends Fragment {
         map.put("email", email);
         map.put("profileImage", " ");
         map.put("uid", user.getUid());
+        map.put("following", 0);
+        map.put("followers", 0);
+        map.put("status", "");
 
         FirebaseFirestore.getInstance().collection("Users").document(user.getUid())
                 .set(map)

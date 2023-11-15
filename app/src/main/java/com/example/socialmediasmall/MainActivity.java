@@ -54,34 +54,34 @@ public class MainActivity extends AppCompatActivity {
 
         // Thêm tabs cho TabLayout
         addTabs();
-        new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
-            @Override
-            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                switch (position) {
-                    case 0:
-                        tab.setText("Home");
-                        tab.setIcon(R.drawable.ic_home);
-                        break;
-                    case 1:
-                        tab.setText("Search");
-                        tab.setIcon(R.drawable.ic_search);
-                        break;
-                    case 2:
-                        tab.setText("Add");
-                        tab.setIcon(R.drawable.icons8_add);
-                        break;
-                    case 3:
-                        tab.setText("Heart");
-                        tab.setIcon(R.drawable.ic_heart_fill);
-                        break;
-                    case 4:
-                        tab.setText("Help");
-                        tab.setIcon(android.R.drawable.ic_menu_help);
-                        break;
-                }
-
-            }
-        });
+//        new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
+//            @Override
+//            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+//                switch (position) {
+//                    case 0:
+//                        tab.setText("Home");
+//                        tab.setIcon(R.drawable.ic_home);
+//                        break;
+//                    case 1:
+//                        tab.setText("Search");
+//                        tab.setIcon(R.drawable.ic_search);
+//                        break;
+//                    case 2:
+//                        tab.setText("Add");
+//                        tab.setIcon(R.drawable.icons8_add);
+//                        break;
+//                    case 3:
+//                        tab.setText("Heart");
+//                        tab.setIcon(R.drawable.ic_heart_fill);
+//                        break;
+//                    case 4:
+//                        tab.setText("Help");
+//                        tab.setIcon(android.R.drawable.ic_menu_help);
+//                        break;
+//                }
+//
+//            }
+//        });
 
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_home);
 

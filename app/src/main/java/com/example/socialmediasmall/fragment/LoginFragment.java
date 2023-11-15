@@ -29,6 +29,7 @@ import com.example.socialmediasmall.DataLocalManager;
 import com.example.socialmediasmall.ForgotPasswordActivity;
 import com.example.socialmediasmall.MainActivity;
 import com.example.socialmediasmall.R;
+import com.example.socialmediasmall.ReplacerActivity;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -130,7 +131,7 @@ public class LoginFragment extends Fragment {
 
     }
 
-    private void clickListener() {
+    private void    clickListener() {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -139,6 +140,12 @@ public class LoginFragment extends Fragment {
             }
         });
 
+        signUpTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((ReplacerActivity) getActivity()).setFragment(new CreateAccountFragment());
+            }
+        });
         googleSignUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -350,7 +357,9 @@ public class LoginFragment extends Fragment {
         map.put("email", mUser.getEmail());
         map.put("profileImage", String.valueOf(mUser.getPhotoUrl()));
         map.put("uid", mUser.getUid());
-
+        map.put("following", 0);
+        map.put("followers", 0);
+        map.put("status", "");
         FirebaseFirestore.getInstance().collection("Users").document(mUser.getUid())
                 .set(map)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
