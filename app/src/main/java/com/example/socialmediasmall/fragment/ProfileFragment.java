@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -16,12 +17,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.socialmediasmall.R;
+import com.example.socialmediasmall.model.PostImageModel;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -29,6 +33,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -44,6 +49,9 @@ public class ProfileFragment extends Fragment {
     private LinearLayout countLayout;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
+    private String uid;
+    FirestoreRecyclerAdapter<PostImageModel, PostImageViewHolder> adapter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,10 +79,57 @@ public class ProfileFragment extends Fragment {
         }
 
         loadBasicData();
+
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        loadPostImages();
+        recyclerView.setAdapter(adapter);
+
     }
 
-    private void loadPostImages(){
+    private void loadPostImages() {
+        if (isMyProfile == true) {
+            uid = mUser.getUid();
+        } else {
+        }
+        DocumentReference reference = FirebaseFirestore.getInstance()
+                .collection("Users").document(uid);
 
+        Query query = reference.collection("images");
+
+        FirestoreRecyclerOptions<PostImageModel> options = new FirestoreRecyclerOptions.Builder<PostImageModel>()
+                .setQuery(query, PostImageModel.class)
+                .build();
+
+        adapter = new FirestoreRecyclerAdapter<PostImageModel, PostImageViewHolder>(options) {
+            @Override
+            protected void onBindViewHolder(@NonNull PostImageViewHolder holder, int position, @NonNull PostImageModel model) {
+                Glide.with(holder.itemView.getContext().getApplicationContext()).
+                        load(model.getImageUrl())
+                        .timeout(6500)
+                        .into(holder.postImageView);
+
+            }
+
+            @NonNull
+            @Override
+            public PostImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.profile_image_item, parent, false);
+                return new PostImageViewHolder(view);
+            }
+        };
+
+    }
+
+    private class PostImageViewHolder extends RecyclerView.ViewHolder {
+        private ImageView postImageView;
+
+        public PostImageViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            profileImage = itemView.findViewById(R.id.imageView);
+
+        }
     }
 
     private void loadBasicData() {
@@ -129,5 +184,17 @@ public class ProfileFragment extends Fragment {
         mUser = mAuth.getCurrentUser();
 
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        adapter.stopListening();
     }
 }
