@@ -28,6 +28,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.socialmediasmall.R;
@@ -117,9 +118,21 @@ public class ProfileFragment extends Fragment {
                                     //firebaseFirestore
                                     FirebaseFirestore.getInstance().collection("Users")
                                             .document(mUser.getUid())
-                                            .update(map);
+                                            .update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Toast.makeText(getContext(), "Updated Profile Users Successful", Toast.LENGTH_SHORT).show();
+                                                    } else {
+                                                        Toast.makeText(getContext(), "Updated Profile Users Error", Toast.LENGTH_SHORT).show();
+
+                                                    }
+                                                }
+                                            });
                                 }
                             });
+                        } else {
+                            Toast.makeText(getContext(), "Upload Storage Error", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

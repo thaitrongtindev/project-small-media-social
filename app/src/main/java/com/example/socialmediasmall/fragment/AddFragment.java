@@ -169,7 +169,8 @@ public class AddFragment extends Fragment implements ISendImage {
                 .collection("Post Images");
 
         String id = collectionReference.document().getId();// layas id cua "Post Images"
-
+        Log.e("id in Addfragment", id.toString());
+        Log.e("uId in Addfragment", mUser.getUid().toString());
         String description = descEt.getText().toString().trim();
         Map<String, Object> map = new HashMap<>();
         map.put("id", id);
@@ -180,6 +181,8 @@ public class AddFragment extends Fragment implements ISendImage {
         map.put("profileImage", String.valueOf(mUser.getPhotoUrl()));
         map.put("likeCount", 0);
         map.put("username", mUser.getDisplayName());
+        map.put("comments", "");
+        map.put("uId", mUser.getUid());// id of user
 
 
         // gui data len firebasefirestore

@@ -62,29 +62,43 @@ public class HomeFragment extends Fragment {
         init(view);
 
         //document reference
-        reference = FirebaseFirestore.getInstance().collection("Posts").document(mUser.getUid());
+        //  reference = FirebaseFirestore.getInstance().collection("Posts").document(mUser.getUid());
 
         mListHomeModels = new ArrayList<>();
         homeFragmentAdapter = new HomeFragmentAdapter(mListHomeModels, getContext());
         recyclerView.setAdapter(homeFragmentAdapter);
-        
+
         loadDatatFromFirebase();
     }
 
     private void loadDatatFromFirebase() {
         CollectionReference collectionReference = FirebaseFirestore.getInstance()
-                        .collection("Users").document(mUser.getUid())
-                        .collection("Post Images");
+                .collection("Users").document(mUser.getUid())
+                .collection("Post Images");
 
-        collectionReference.addSnapshotListener(getActivity(),new EventListener<QuerySnapshot>() {
+        collectionReference.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
-                    Log.e("Error", error.getMessage() );
+                    Log.e("Error", error.getMessage());
                     return;
                 }
 
-                for (QueryDocumentSnapshot  snapshot : value) {
+                for (QueryDocumentSnapshot snapshot : value) {
+                    // get data from Post Images to display HomeFragment
+                    mListHomeModels.add(new HomeModel(
+                            (String) snapshot.get("username".toString()),
+                            (String) snapshot.get("timestamps".toString()),
+                            (String) snapshot.get("profileImage".toString()),
+                            (String) snapshot.get("postImage".toString()),
+                            (String) snapshot.get("uId".toString()),
+                            Integer.parseInt(snapshot.get("likeCount").toString()),
+                            (String) snapshot.get("comments".toString()),
+                            (String) snapshot.get("description".toString()),
+                            (String) snapshot.get("id".toString())
+
+                    ));
+                    homeFragmentAdapter.notifyDataSetChanged();
 
                 }
             }
