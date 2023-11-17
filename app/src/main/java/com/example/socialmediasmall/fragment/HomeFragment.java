@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,13 @@ import com.example.socialmediasmall.adapter.HomeFragmentAdapter;
 import com.example.socialmediasmall.model.HomeModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,12 +72,23 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadDatatFromFirebase() {
-        mListHomeModels.add(new HomeModel("Trong Tin", "13/11/2023", "", "", "123456", 12));
-        mListHomeModels.add(new HomeModel("Van Chuong", "11/11/2023", "", "", "321654", 21));
-        mListHomeModels.add(new HomeModel("Trong Nghia", "13/11/2023", "", "", "478945", 10));
-        mListHomeModels.add(new HomeModel("Vuong Bui", "13/11/2023", "", "", "316542", 19));
-        mListHomeModels.add(new HomeModel("Thai Bao", "13/11/2023", "", "", "846453", 33));
+        CollectionReference collectionReference = FirebaseFirestore.getInstance()
+                        .collection("Users").document(mUser.getUid())
+                        .collection("Post Images");
 
+        collectionReference.addSnapshotListener(getActivity(),new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.e("Error", error.getMessage() );
+                    return;
+                }
+
+                for (QueryDocumentSnapshot  snapshot : value) {
+
+                }
+            }
+        });
         homeFragmentAdapter.notifyDataSetChanged();
     }
 

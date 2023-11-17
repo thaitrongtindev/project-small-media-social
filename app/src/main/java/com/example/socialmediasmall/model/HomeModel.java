@@ -8,14 +8,20 @@ public class HomeModel {
     private String postImage;
     private String uId;
     private int likeCount;
+    private String comments, description;
 
-    public HomeModel(String username, String timestamps, String profileImage, String postImage, String uId, int likeCount) {
+    public HomeModel() {
+    }
+
+    public HomeModel(String username, String timestamps, String profileImage, String postImage, String uId, int likeCount, String comments, String description) {
         this.username = username;
         this.timestamps = timestamps;
         this.profileImage = profileImage;
         this.postImage = postImage;
         this.uId = uId;
         this.likeCount = likeCount;
+        this.comments = comments;
+        this.description = description;
     }
 
     public String getUsername() {
@@ -64,5 +70,21 @@ public class HomeModel {
 
     public void setLikeCount(int likeCount) {
         this.likeCount = likeCount;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
