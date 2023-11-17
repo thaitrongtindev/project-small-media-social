@@ -28,6 +28,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -92,6 +93,7 @@ public class ProfileFragment extends Fragment {
             uid = mUser.getUid();
         } else {
         }
+
         DocumentReference reference = FirebaseFirestore.getInstance()
                 .collection("Users").document(uid);
 

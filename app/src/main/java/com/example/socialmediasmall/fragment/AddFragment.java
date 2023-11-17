@@ -1,5 +1,7 @@
 package com.example.socialmediasmall.fragment;
 
+import android.Manifest;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,22 +10,47 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.socialmediasmall.R;
 import com.example.socialmediasmall.adapter.GalleryAdapter;
+import com.example.socialmediasmall.interfaceListener.ISendImage;
 import com.example.socialmediasmall.model.GalleryImages;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
-public class AddFragment extends Fragment {
+public class AddFragment extends Fragment implements ISendImage {
 
 
     private EditText descEt;
@@ -32,11 +59,14 @@ public class AddFragment extends Fragment {
     private ImageButton backBtn, nextBtn;
     private GalleryAdapter adapter;
     private List<GalleryImages> listImages;
+    private Uri imageUri;
+    private String imageUrl;
+    private FirebaseUser mUser;
+
+
     public AddFragment() {
         // Required empty public constructor
     }
-
-
 
 
     @Override
@@ -63,13 +93,130 @@ public class AddFragment extends Fragment {
         adapter = new GalleryAdapter(listImages);
 
         recyclerView.setAdapter(adapter);
+        clickListener();
+    }
+
+    private void clickListener() {
+        adapter.sendImage(this);
+
+
+        nextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clickOnBtnNext();
+            }
+        });
+    }
+
+    private void clickOnBtnNext() {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference reference = storage.getReference().child("Post Images/"
+                + System.currentTimeMillis());
+        reference.putFile(imageUri)
+                .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            reference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    imageUrl = uri.toString();
+                                    Log.e("imageUrl- Storage", imageUrl.toString());
+                                    upLoadData(uri.toString());
+                                }
+                            });
+                        }
+                    }
+                });
+    }
+
+    private void upLoadData(String imageUrl) {
+
+        CollectionReference collectionReference = FirebaseFirestore.getInstance()
+                .collection("Users").document(mUser.getUid())
+                .collection("Post Images");
+
+        String id  = collectionReference.document().getId();// layas id cua "Post Images"
+
+        String description = descEt.getText().toString().trim();
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", id);
+        map.put("description",description);
+        map.put("imageUrl", imageUrl);
+        map.put("timestamp", FieldValue.serverTimestamp());
+
+        // gui data len firebasefirestore
+        collectionReference.document(id).set(map)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            System.out.println();
+                            Toast.makeText(getContext(), "ADD Fragment Data len firestore ss", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
     }
 
     private void init(View view) {
         descEt = view.findViewById(R.id.descriptionET);
-        imageView  = view.findViewById(R.id.imageView);
-        recyclerView  = view.findViewById(R.id.recyclerView);
-        backBtn  = view.findViewById(R.id.backBtn);
-        nextBtn  = view.findViewById(R.id.nextBtn);
+        imageView = view.findViewById(R.id.imageView);
+        recyclerView = view.findViewById(R.id.recyclerView);
+        backBtn = view.findViewById(R.id.backBtn);
+        nextBtn = view.findViewById(R.id.nextBtn);
+
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // được sử dụng để đảm bảo rằng việc cập nhật giao diện người dùng sẽ xảy ra trên luồng UI.
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Dexter.withContext(getContext())
+                        .withPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.READ_EXTERNAL_STORAGE)
+                        .withListener(new MultiplePermissionsListener() {
+                            @Override
+                            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                                if (report.areAllPermissionsGranted()) {
+                                    // để truy cập vào thư mục lưu trữ bên ngoài ứng dụng
+                                    File file = new File(Environment.getExternalStorageDirectory().toString() + "/Download");
+
+                                    if (file.exists()) {
+                                        File[] files = file.listFiles();
+                                        for (File file1 : files) {
+                                            if (file1.getAbsolutePath().endsWith(".jpg") || file1.getAbsolutePath().endsWith(".png")) {
+                                                listImages.add(new GalleryImages(Uri.fromFile(file1)));
+                                                adapter.notifyDataSetChanged();
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
+
+                            }
+                        });
+            }
+        });
+    }
+
+    @Override
+    public void onSend(Uri picUri) {
+        imageUri = picUri;
+        Log.e("imageUri in Fun OnSend", imageUri.toString());
+        Glide.with(getContext())
+                .load(picUri)
+                .into(imageView);
+        imageView.setVisibility(View.VISIBLE);
     }
 }

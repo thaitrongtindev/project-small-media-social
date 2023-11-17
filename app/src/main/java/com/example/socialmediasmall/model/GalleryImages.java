@@ -3,12 +3,10 @@ package com.example.socialmediasmall.model;
 import android.net.Uri;
 
 public class GalleryImages {
-    private Uri picUri;
-    private String date;
+    public Uri picUri;
 
-    public GalleryImages(Uri picUri, String date) {
+    public GalleryImages(Uri picUri) {
         this.picUri = picUri;
-        this.date = date;
     }
 
     public GalleryImages() {
@@ -22,11 +20,7 @@ public class GalleryImages {
         this.picUri = picUri;
     }
 
-    public String getDate() {
-        return date;
-    }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
+
+
 }
