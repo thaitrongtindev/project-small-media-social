@@ -1,9 +1,16 @@
 package com.example.socialmediasmall.fragment;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.Manifest;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -42,6 +49,8 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -62,6 +71,29 @@ public class AddFragment extends Fragment implements ISendImage {
     private Uri imageUri;
     private String imageUrl;
     private FirebaseUser mUser;
+    private final ActivityResultLauncher<Intent> cropActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                    // Xử lý lỗi nếu có
+                } else if (result.getResultCode() == RESULT_OK) {
+                    Intent data = result.getData();
+                    if (data != null) {
+                        CropImage.ActivityResult cropResult = CropImage.getActivityResult(data);
+                        Uri image = cropResult.getUri();
+
+                        // Hiển thị hình ảnh đã cắt lên ImageView bằng Glide
+                        Glide.with(requireContext())
+                                .load(image)
+                                .into(imageView);
+
+                        // Hiển thị ImageView và Button khi có hình ảnh
+                        imageView.setVisibility(View.VISIBLE);
+                        nextBtn.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+    );
 
 
     public AddFragment() {
@@ -214,9 +246,49 @@ public class AddFragment extends Fragment implements ISendImage {
     public void onSend(Uri picUri) {
         imageUri = picUri;
         Log.e("imageUri in Fun OnSend", imageUri.toString());
-        Glide.with(getContext())
-                .load(picUri)
-                .into(imageView);
-        imageView.setVisibility(View.VISIBLE);
+
+//        CropImage.activity(imageUri)
+//                .setGuidelines(CropImageView.Guidelines.ON)
+//                .setMultiTouchEnabled(true)
+//                .start(requireContext(), cropActivityResultLauncher);
+        // Tạo intent để khởi chạy hoạt động CropImage
+        Intent intent = CropImage.activity(imageUri)
+                .getIntent(requireContext());
+
+        // Khởi chạy hoạt động CropImage bằng startActivityForResult và Intent đã tạo
+        cropActivityResultLauncher.launch(intent);
     }
+
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+//            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+//
+//            if (requestCode == RESULT_OK) {
+//                Uri image  = result.getUri();
+//                Glide.with(getContext())
+//                        .load(image)
+//                        .into(imageView);
+//                imageView.setVisibility(View.VISIBLE);
+//                nextBtn.setVisibility(View.VISIBLE);
+//            }
+//        }
+//    }
+//
+//    ActivityResultLauncher<Intent> cropLauncher = registerForActivityResult(
+//            new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+//                @Override
+//                public void onActivityResult(ActivityResult result) {
+//                    if (result.getResultCode() == RESULT_OK) {
+//                        Uri resultUri = CropImage.getActivityResult(result.getData()).getUri();
+//                        Glide.with(getContext())
+//                                .load(resultUri)
+//                                .into(imageView);
+//                        imageView.setVisibility(View.VISIBLE);
+//                        nextBtn.setVisibility(View.VISIBLE);
+//                    }
+//                }
+//            }
+//    );
 }
