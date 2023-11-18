@@ -103,7 +103,7 @@ public class HomeFragment extends Fragment {
                             homeModel.getTimestamp(),
                             homeModel.getProfileImage(),
                             homeModel.getImageUrl(),
-                            homeModel.getuId(),
+                            homeModel.getUid(),
                             homeModel.getLikeCount(),
                             homeModel.getComments(),
                             homeModel.getDescription(),

@@ -11,19 +11,19 @@ public class HomeModel {
     private Date timestamp;
     private String profileImage;
     private String imageUrl;
-    private String uId;
+    private String uid;
     private int likeCount;
     private String comments, description, id;
 
     public HomeModel() {
     }
 
-    public HomeModel(String username, Date timestamp, String profileImage, String imageUrl, String uId, int likeCount, String comments, String description, String id) {
+    public HomeModel(String username, Date timestamp, String profileImage, String imageUrl, String uid, int likeCount, String comments, String description, String id) {
         this.username = username;
         this.timestamp = timestamp;
         this.profileImage = profileImage;
         this.imageUrl = imageUrl;
-        this.uId = uId;
+        this.uid = uid;
         this.likeCount = likeCount;
         this.comments = comments;
         this.description = description;
@@ -62,12 +62,12 @@ public class HomeModel {
         this.imageUrl = postImage;
     }
 
-    public String getuId() {
-        return uId;
+    public String getUid() {
+        return uid;
     }
 
-    public void setuId(String uId) {
-        this.uId = uId;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public int getLikeCount() {

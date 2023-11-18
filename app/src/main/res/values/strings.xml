@@ -34,4 +34,5 @@
     <string name="add_something_about_this_post">Add Something About This Post</string>
     <string name="description">Description</string>
     <string name="sign_in">SIGN IN</string>
+    <string name="search_here">Search here...</string>
 </resources>

@@ -7,7 +7,9 @@
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="200dp"
+
+        android:layout_margin="2dp"
         android:contentDescription="@string/username"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop" />
 
 </RelativeLayout>

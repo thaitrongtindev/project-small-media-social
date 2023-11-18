@@ -207,7 +207,7 @@ public class ProfileFragment extends Fragment {
         public PostImageViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            profileImage = itemView.findViewById(R.id.imageView);
+            postImageView = itemView.findViewById(R.id.imageView);
 
         }
     }
