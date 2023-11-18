@@ -11,7 +11,7 @@
        android:layout_width="match_parent"
        android:layout_height="?attr/actionBarSize"
        android:layout_alignParentTop="true"
-       android:background="@color/white"
+       android:background="@android:color/white"
        android:elevation="2dp"
        app:contentInsetEnd="0dp"
        app:contentInsetStart="0dp">
@@ -23,14 +23,14 @@
          <TextView
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
-             android:layout_centerInParent="true"
+             android:layout_centerHorizontal="true"
              android:layout_centerVertical="true"
              android:text="@string/app_name"
-             android:textColor="@color/black"
+             android:textColor="@android:color/black"
              android:textSize="18sp"
              android:textStyle="bold" />
 
-         <ImageView
+         <ImageButton
              android:id="@+id/sendBtn"
              android:layout_width="24dp"
              android:layout_height="24dp"
@@ -39,13 +39,21 @@
              android:layout_centerVertical="true"
              android:layout_margin="12dp"
              android:background="@drawable/ic_send_v1"
-             android:contentDescription="@string/app_name" />
+             android:contentDescription="@null" />
 
       </RelativeLayout>
+
    </androidx.appcompat.widget.Toolbar>
+
    <androidx.recyclerview.widget.RecyclerView
+       android:id="@+id/storiesRecyclerView"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_below="@id/toolbar" />
+
+   <androidx.recyclerview.widget.RecyclerView
+       android:id="@+id/recyclerView"
        android:layout_width="match_parent"
        android:layout_height="match_parent"
-       android:layout_below="@id/toolbar"
-      android:id="@+id/recyclerView"/>
+       android:layout_below="@id/storiesRecyclerView" />
 </RelativeLayout>

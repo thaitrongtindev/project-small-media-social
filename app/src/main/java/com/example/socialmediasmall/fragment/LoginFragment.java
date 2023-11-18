@@ -64,7 +64,7 @@ public class LoginFragment extends Fragment {
 
     private EditText emailEdt, passwordEdt;
     private TextView signUpTv, forgotPasswordTv;
-    private Button loginBtn, googleSignUpBtn, facebookSignUpBtn;
+    private Button signInBtn, googleSignUpBtn, facebookSignUpBtn;
     private ProgressBar progressBar;
     private CheckBox rememberCheckBox;
     private ProgressDialog progressDialog;
@@ -132,11 +132,11 @@ public class LoginFragment extends Fragment {
     }
 
     private void    clickListener() {
-        loginBtn.setOnClickListener(new View.OnClickListener() {
+        signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 progressBar.setVisibility(View.VISIBLE);
-                clickLogin();
+                clickSignIn();
             }
         });
 
@@ -187,13 +187,13 @@ public class LoginFragment extends Fragment {
             }
         });
 
-        emailEdt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               Set<String> data = DataLocalManager.getStringValue();
-               emailEdt.setText(data.toString());
-            }
-        });
+//        emailEdt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//               Set<String> data = DataLocalManager.getStringValue();
+//               emailEdt.setText(data.toString());
+//            }
+//        });
     }
 
     private void clickForgotPassword() {
@@ -380,7 +380,7 @@ public class LoginFragment extends Fragment {
     }
 
 
-    private void clickLogin() {
+    private void clickSignIn() {
         String email = emailEdt.getText().toString();
         String pass = passwordEdt.getText().toString();
 
@@ -394,11 +394,13 @@ public class LoginFragment extends Fragment {
                             if (!user.isEmailVerified()) {
                                 Toast.makeText(getContext(), "Please verify your email", Toast.LENGTH_SHORT).show();
                             }
+                            Toast.makeText(getContext(), "Login Success", Toast.LENGTH_SHORT).show();
 
                             sendUserToMainActivity();
 
                         } else {
                             progressBar.setVisibility(View.GONE);
+                            Toast.makeText(getContext(), "Login failed"+ task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             Log.e("LOGIN", task.getException().toString() );
                         }
                     }
@@ -419,7 +421,7 @@ public class LoginFragment extends Fragment {
         forgotPasswordTv = view.findViewById(R.id.tvForgotPassword);
         facebookSignUpBtn = view.findViewById(R.id.facebookLoginBtn);
         googleSignUpBtn = view.findViewById(R.id.googleLoginBtn);
-        loginBtn = view.findViewById(R.id.loginBtn);
+        signInBtn = view.findViewById(R.id.signInBtn);
         rememberCheckBox = view.findViewById(R.id.checkboxRememberPass);
 
         progressBar = view.findViewById(R.id.progress_login);

@@ -3,6 +3,7 @@ package com.example.socialmediasmall.fragment;
 import static android.app.Activity.RESULT_OK;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,6 +70,8 @@ public class AddFragment extends Fragment implements ISendImage {
     private ImageButton backBtn, nextBtn;
     private GalleryAdapter adapter;
     private List<GalleryImages> listImages;
+    private static final int REQUEST_CODE_GALLERY = 123;
+
     private Uri imageUri;
     private String imageUrl;
     private FirebaseUser mUser;
@@ -126,6 +130,7 @@ public class AddFragment extends Fragment implements ISendImage {
 
         recyclerView.setAdapter(adapter);
         clickListener();
+        openGallery();
     }
 
     private void clickListener() {
@@ -169,8 +174,7 @@ public class AddFragment extends Fragment implements ISendImage {
                 .collection("Post Images");
 
         String id = collectionReference.document().getId();// layas id cua "Post Images"
-        Log.e("id in Addfragment", id.toString());
-        Log.e("uId in Addfragment", mUser.getUid().toString());
+
         String description = descEt.getText().toString().trim();
         Map<String, Object> map = new HashMap<>();
         map.put("id", id);
@@ -181,8 +185,6 @@ public class AddFragment extends Fragment implements ISendImage {
         map.put("profileImage", String.valueOf(mUser.getPhotoUrl()));
         map.put("likeCount", 0);
         map.put("username", mUser.getDisplayName());
-        map.put("comments", "");
-        map.put("uId", mUser.getUid());// id of user
 
 
         // gui data len firebasefirestore
@@ -212,42 +214,39 @@ public class AddFragment extends Fragment implements ISendImage {
 
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+
         // được sử dụng để đảm bảo rằng việc cập nhật giao diện người dùng sẽ xảy ra trên luồng UI.
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Dexter.withContext(getContext())
-                        .withPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                Manifest.permission.READ_EXTERNAL_STORAGE)
-                        .withListener(new MultiplePermissionsListener() {
-                            @Override
-                            public void onPermissionsChecked(MultiplePermissionsReport report) {
-                                if (report.areAllPermissionsGranted()) {
-                                    // để truy cập vào thư mục lưu trữ bên ngoài ứng dụng
-                                    File file = new File(Environment.getExternalStorageDirectory().toString() + "/Download");
 
-                                    if (file.exists()) {
-                                        File[] files = file.listFiles();
-                                        for (File file1 : files) {
-                                            if (file1.getAbsolutePath().endsWith(".jpg") || file1.getAbsolutePath().endsWith(".png")) {
-                                                listImages.add(new GalleryImages(Uri.fromFile(file1)));
-                                                adapter.notifyDataSetChanged();
-                                            }
-                                        }
-                                    }
-                                }
-                            }
 
-                            @Override
-                            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
 
-                            }
-                        });
+    // Trong phương thức bạn muốn mở Gallery (ví dụ: trong một sự kiện nhấn nút)
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_CODE_GALLERY);
+    }
+
+    // Xử lý kết quả sau khi người dùng đã chọn hình ảnh từ Gallery
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_GALLERY && resultCode == Activity.RESULT_OK && data != null) {
+            imageUri = data.getData();
+
+            // Sử dụng selectedImageUri cho mục đích của bạn, ví dụ: hiển thị hình ảnh trong ImageView
+            if (imageUri != null) {
+                // Hiển thị hình ảnh đã chọn trong ImageView (ví dụ: imageView.setImageURI(selectedImageUri);)
+                Glide.with(requireContext())
+                        .load(imageUri)
+                        .into(imageView);
+
+                // Hiển thị ImageView và Button khi có hình ảnh
+                imageView.setVisibility(View.VISIBLE);
+                nextBtn.setVisibility(View.VISIBLE);
+                // Gọi các hàm xử lý hình ảnh hoặc hiển thị nó trong ứng dụng của bạn ở đây
             }
-        });
+        }
     }
 
     @Override
@@ -267,36 +266,5 @@ public class AddFragment extends Fragment implements ISendImage {
         cropActivityResultLauncher.launch(intent);
     }
 
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-//            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-//
-//            if (requestCode == RESULT_OK) {
-//                Uri image  = result.getUri();
-//                Glide.with(getContext())
-//                        .load(image)
-//                        .into(imageView);
-//                imageView.setVisibility(View.VISIBLE);
-//                nextBtn.setVisibility(View.VISIBLE);
-//            }
-//        }
-//    }
-//
-//    ActivityResultLauncher<Intent> cropLauncher = registerForActivityResult(
-//            new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-//                @Override
-//                public void onActivityResult(ActivityResult result) {
-//                    if (result.getResultCode() == RESULT_OK) {
-//                        Uri resultUri = CropImage.getActivityResult(result.getData()).getUri();
-//                        Glide.with(getContext())
-//                                .load(resultUri)
-//                                .into(imageView);
-//                        imageView.setVisibility(View.VISIBLE);
-//                        nextBtn.setVisibility(View.VISIBLE);
-//                    }
-//                }
-//            }
-//    );
+
 }

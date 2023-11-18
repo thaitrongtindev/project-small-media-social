@@ -32,4 +32,6 @@
     <string name="posts">Posts</string>
     <string name="follow">Follow</string>
     <string name="add_something_about_this_post">Add Something About This Post</string>
+    <string name="description">Description</string>
+    <string name="sign_in">SIGN IN</string>
 </resources>

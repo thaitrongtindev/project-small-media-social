@@ -74,26 +74,6 @@ public class ProfileFragment extends Fragment {
     private ImageButton edtProfileBtn;
     FirestoreRecyclerAdapter<PostImageModel, PostImageViewHolder> adapter;
 
-    private ActivityResultLauncher<Intent> cropperImageLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-                        if (result.getResultCode() == Activity.RESULT_OK) {
-                            Intent data = result.getData();
-                            if (data != null) {
-                                CropImage.ActivityResult cropResult = CropImage.getActivityResult(data);
-                                Uri imageUri = cropResult.getUri();
-
-                                // upload on
-                                uploadImages(imageUri);
-                            }
-                        }
-                    }
-
-                }
-            }
-    );
 
     private void uploadImages(Uri imageUri) {
         //upload storage
@@ -184,6 +164,8 @@ public class ProfileFragment extends Fragment {
     private void clickOnEditProfileImage() {
     }
 
+
+
     private void loadPostImages() {
         if (isMyProfile == true) {
             uid = mUser.getUid();
@@ -193,7 +175,7 @@ public class ProfileFragment extends Fragment {
         DocumentReference reference = FirebaseFirestore.getInstance()
                 .collection("Users").document(uid);
 
-        Query query = reference.collection("images");
+        Query query = reference.collection("Post Images");
 
         FirestoreRecyclerOptions<PostImageModel> options = new FirestoreRecyclerOptions.Builder<PostImageModel>()
                 .setQuery(query, PostImageModel.class)
@@ -261,6 +243,8 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
+
+        postCountTv.setText(String.valueOf("" + HomeFragment.LIST_SIZE));
     }
 
     private void init(View view) {
@@ -277,6 +261,8 @@ public class ProfileFragment extends Fragment {
         profileImage = view.findViewById(R.id.profileImage);
         recyclerView = view.findViewById(R.id.recyclerView);
         countLayout = view.findViewById(R.id.countLayout);
+
+        followBtn = view.findViewById(R.id.followBtn);
 
         edtProfileBtn = view.findViewById(R.id.edit_profileIamge);
 

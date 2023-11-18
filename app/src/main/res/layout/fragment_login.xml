@@ -94,10 +94,10 @@
 
 
     <Button
-        android:id="@+id/loginBtn"
+        android:id="@+id/signInBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/sign_up"
+        android:text="@string/sign_in"
         android:background="@drawable/button_bg"
         android:layout_marginHorizontal="25dp"
         android:layout_marginBottom="20dp"

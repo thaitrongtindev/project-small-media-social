@@ -1,11 +1,16 @@
 package com.example.socialmediasmall.model;
 
+import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.Date;
+
 public class HomeModel {
 
     private String username;
-    private String timestamps;
+    @ServerTimestamp
+    private Date timestamp;
     private String profileImage;
-    private String postImage;
+    private String imageUrl;
     private String uId;
     private int likeCount;
     private String comments, description, id;
@@ -13,11 +18,11 @@ public class HomeModel {
     public HomeModel() {
     }
 
-    public HomeModel(String username, String timestamps, String profileImage, String postImage, String uId, int likeCount, String comments, String description, String id) {
+    public HomeModel(String username, Date timestamp, String profileImage, String imageUrl, String uId, int likeCount, String comments, String description, String id) {
         this.username = username;
-        this.timestamps = timestamps;
+        this.timestamp = timestamp;
         this.profileImage = profileImage;
-        this.postImage = postImage;
+        this.imageUrl = imageUrl;
         this.uId = uId;
         this.likeCount = likeCount;
         this.comments = comments;
@@ -33,12 +38,12 @@ public class HomeModel {
         this.username = username;
     }
 
-    public String getTimestamps() {
-        return timestamps;
+    public Date getTimestamp() {
+        return timestamp;
     }
 
-    public void setTimestamps(String timestamps) {
-        this.timestamps = timestamps;
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getProfileImage() {
@@ -49,12 +54,12 @@ public class HomeModel {
         this.profileImage = profileImage;
     }
 
-    public String getPostImage() {
-        return postImage;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setPostImage(String postImage) {
-        this.postImage = postImage;
+    public void setImageUrl(String postImage) {
+        this.imageUrl = postImage;
     }
 
     public String getuId() {

@@ -17,7 +17,10 @@ import com.bumptech.glide.Glide;
 import com.example.socialmediasmall.R;
 import com.example.socialmediasmall.model.HomeModel;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -44,7 +47,9 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
     public void onBindViewHolder(@NonNull HomeViewHolder holder, int position) {
 
         holder.usernameTv.setText(listHomeModel.get(position).getUsername());
-        holder.timeTv.setText(listHomeModel.get(position).getTimestamps());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+        String s = sdf.format(listHomeModel.get(position).getTimestamp());
+        holder.timeTv.setText(s);
 
         int count = listHomeModel.get(position).getLikeCount();
         if (count == 0) {
@@ -54,16 +59,20 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
         } else {
             holder.likeCountTv.setText(count + " likes");
         }
+
+        holder.descriptionTv.setText(listHomeModel.get(position).getDescription());
         Random random = new Random();
         int color = Color.argb(255, random.nextInt(255), random.nextInt(256), random.nextInt(256));
 
+        // image person profile
         Glide.with(context.getApplicationContext())
                 .load(listHomeModel.get(position).getProfileImage())
                 .timeout(6500)
                 .into(holder.profileImage);
 
+        // image post
         Glide.with(context.getApplicationContext())
-                .load(listHomeModel.get(position).getProfileImage())
+                .load(listHomeModel.get(position).getImageUrl())
                 .timeout(7000)
                 .into(holder.imageView);
     }
@@ -75,7 +84,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
 
     public class HomeViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView usernameTv, timeTv, likeCountTv;
+        private TextView usernameTv, timeTv, likeCountTv , descriptionTv;
         private CircleImageView profileImage;
         private ImageButton likeBtn, commentBtn, shareBtn;
         private ImageView imageView;
@@ -89,6 +98,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
             commentBtn = itemView.findViewById(R.id.commentBtn);
             shareBtn = itemView.findViewById(R.id.shareBtn);
             imageView = itemView.findViewById(R.id.imageView);
+            descriptionTv = itemView.findViewById(R.id.descTv);
         }
     }
 }

@@ -16,7 +16,7 @@ public class ReplacerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fragment_replace);
+        setContentView(R.layout.activity_replacer);
 
         frameLayout = findViewById(R.id.framelayout);
 

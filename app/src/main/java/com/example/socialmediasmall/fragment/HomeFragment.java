@@ -29,15 +29,18 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
 
+    public static int LIST_SIZE = 0;
     private RecyclerView recyclerView;
     private HomeFragmentAdapter homeFragmentAdapter;
     private List<HomeModel> mListHomeModels;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
+
     private FirebaseFirestore firebaseFirestore;
     private DocumentReference reference;
 
@@ -76,34 +79,45 @@ public class HomeFragment extends Fragment {
                 .collection("Users").document(mUser.getUid())
                 .collection("Post Images");
 
-        collectionReference.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
+        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
                     Log.e("Error", error.getMessage());
                     return;
                 }
+                if (value == null) {
+                    return;
+                }
+                mListHomeModels.clear();
 
                 for (QueryDocumentSnapshot snapshot : value) {
-                    // get data from Post Images to display HomeFragment
-                    mListHomeModels.add(new HomeModel(
-                            (String) snapshot.get("username".toString()),
-                            (String) snapshot.get("timestamps".toString()),
-                            (String) snapshot.get("profileImage".toString()),
-                            (String) snapshot.get("postImage".toString()),
-                            (String) snapshot.get("uId".toString()),
-                            Integer.parseInt(snapshot.get("likeCount").toString()),
-                            (String) snapshot.get("comments".toString()),
-                            (String) snapshot.get("description".toString()),
-                            (String) snapshot.get("id".toString())
+                    // code quick
 
+                    if (!snapshot.exists()) {
+                        return;
+                    }
+
+                    HomeModel homeModel = snapshot.toObject(HomeModel.class);
+                    mListHomeModels.add(new HomeModel(homeModel.getUsername(),
+                            homeModel.getTimestamp(),
+                            homeModel.getProfileImage(),
+                            homeModel.getImageUrl(),
+                            homeModel.getuId(),
+                            homeModel.getLikeCount(),
+                            homeModel.getComments(),
+                            homeModel.getDescription(),
+                            homeModel.getId()
                     ));
-                    homeFragmentAdapter.notifyDataSetChanged();
 
                 }
+                homeFragmentAdapter.notifyDataSetChanged();
+                LIST_SIZE = mListHomeModels.size();
+                Log.e("LIST_SIZE", "" +mListHomeModels.size());
+
             }
         });
-        homeFragmentAdapter.notifyDataSetChanged();
+        //   homeFragmentAdapter.notifyDataSetChanged();
     }
 
     private void init(View view) {
