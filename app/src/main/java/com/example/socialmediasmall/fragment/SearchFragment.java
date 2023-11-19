@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 
 import com.example.socialmediasmall.R;
 import com.example.socialmediasmall.adapter.UserAdapter;
+import com.example.socialmediasmall.interfaceListener.IOnDataPass;
 import com.example.socialmediasmall.interfaceListener.IOnUserClick;
 import com.example.socialmediasmall.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -40,6 +41,8 @@ public class SearchFragment extends Fragment implements IOnUserClick {
     private UserAdapter userAdapter;
     private List<User> mListUser;
     CollectionReference collectionReference;
+
+    private IOnDataPass iOnDataPass;
 
 
     public SearchFragment() {
@@ -154,7 +157,7 @@ public class SearchFragment extends Fragment implements IOnUserClick {
 
     // thuc hien click vao item_user
     @Override
-    public void onClicked(int position, String uid) {
-
+    public void onClicked(String uid) {
+        iOnDataPass.onChange(uid);
     }
 }

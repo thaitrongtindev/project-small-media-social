@@ -16,13 +16,15 @@ import android.widget.Toast;
 import com.example.socialmediasmall.adapter.ViewPagerAdapter;
 import com.example.socialmediasmall.fragment.AddFragment;
 import com.example.socialmediasmall.fragment.CreateAccountFragment;
+import com.example.socialmediasmall.interfaceListener.IOnDataPass;
+import com.example.socialmediasmall.interfaceListener.IOnUserProfileUid;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IOnDataPass {
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
@@ -30,8 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPagerAdapter viewPagerAdapter;
     public static boolean isGalleryOpened = false;
 
-
-
+    private IOnUserProfileUid iOnUserProfileUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         init();
 
         // Tạo và đặt adapter cho ViewPager2
-       int count = tabLayout.getTabCount();
+        int count = tabLayout.getTabCount();
         Log.e("COunt", "" + count);
         viewPagerAdapter = new ViewPagerAdapter(this);
         viewPager2.setAdapter(viewPagerAdapter);
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 // Thay đổi tab được chọn khi trang ViewPager2 thay đổi
                 tabLayout.selectTab(tabLayout.getTabAt(position));
-                 isGalleryOpened = false;
+                isGalleryOpened = false;
 
 
             }
@@ -73,8 +74,7 @@ public class MainActivity extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 // Di chuyển đến trang tương ứng khi người dùng chọn tab
                 viewPager2.setCurrentItem(tab.getPosition()); //
-                 isGalleryOpened = false;
-
+                isGalleryOpened = false;
 
 
                 switch (tab.getPosition()) {
@@ -145,5 +145,26 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager2 = findViewById(R.id.viewPager2);
         tabLayout = findViewById(R.id.tabLayout);
+    }
+
+
+
+    @Override
+    public void onBackPressed() {
+        if (viewPager2.getCurrentItem() == 4) {
+            viewPager2.setCurrentItem(0);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onChange(String uid) {
+        iOnUserProfileUid.onReceiveUserUid(uid, 999);
+        viewPager2.setCurrentItem(4);
+    }
+
+    public void onUserProfileUid(IOnUserProfileUid iOnUserProfileUid) {
+        this.iOnUserProfileUid = iOnUserProfileUid;
     }
 }

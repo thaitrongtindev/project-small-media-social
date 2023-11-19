@@ -275,11 +275,8 @@ public class AddFragment extends Fragment implements ISendImage {
 //                .setMultiTouchEnabled(true)
 //                .start(requireContext(), cropActivityResultLauncher);
         // Tạo intent để khởi chạy hoạt động CropImage
-        Intent intent = CropImage.activity(imageUri)
-                .getIntent(requireContext());
+   //   upLoadData(imageUri);
 
-        // Khởi chạy hoạt động CropImage bằng startActivityForResult và Intent đã tạo
-        cropActivityResultLauncher.launch(intent);
     }
 
 

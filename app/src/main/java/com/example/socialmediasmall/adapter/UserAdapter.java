@@ -62,8 +62,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 .into(holder.profileImage);
 
 
-        // bat sự kiện click vào item_user
-        holder.clickListener(position, mListUser.get(position).getUid());
+       holder.itemView.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               iOnUserClick.onClicked(mListUser.get(position).getUid());
+           }
+       });
     }
 
     @Override
@@ -88,7 +92,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    iOnUserClick.onClicked(position, uid);
+                    iOnUserClick.onClicked(uid);
                 }
             });
         }
