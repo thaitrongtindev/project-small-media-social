@@ -71,6 +71,7 @@
             <ImageButton
                 android:id="@+id/edit_profileIamge"
                 android:layout_width="wrap_content"
+                android:visibility="gone"
                 android:layout_height="wrap_content"
                 android:layout_alignEnd="@id/profileImage"
                 android:background="@drawable/ic_circle"
@@ -220,12 +221,14 @@
 
         <Button
             android:id="@+id/followBtn"
+            android:layout_below="@id/countLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_bg"
             android:minWidth="160dp"
             android:text="@string/follow"
+            android:layout_marginTop="12dp"
             android:textColor="@color/white"
             android:visibility="gone" />
 

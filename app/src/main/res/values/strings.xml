@@ -36,4 +36,5 @@
     <string name="sign_in">SIGN IN</string>
     <string name="search_here">Search here...</string>
     <string name="status">Status</string>
+    <string name="unfollow">UnFollow</string>
 </resources>

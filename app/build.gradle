@@ -71,6 +71,10 @@ dependencies {
     // dexter: manage request permission
     implementation 'com.karumi:dexter:6.2.3'
 
+    //stylish dialog
+    implementation 'com.github.MarsadMaqsood:StylishDialogs:0.1.3'
+
+
 
 
 }

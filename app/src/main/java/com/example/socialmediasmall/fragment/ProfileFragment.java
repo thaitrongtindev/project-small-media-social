@@ -2,6 +2,9 @@
 
     import static android.view.View.GONE;
 
+    import static com.example.socialmediasmall.MainActivity.IS_SEARCHED_USER;
+    import static com.example.socialmediasmall.MainActivity.USER_ID;
+
     import android.app.Activity;
     import android.content.Intent;
     import android.net.Uri;
@@ -33,7 +36,6 @@
 
     import com.bumptech.glide.Glide;
     import com.example.socialmediasmall.R;
-    import com.example.socialmediasmall.interfaceListener.IOnUserProfileUid;
     import com.example.socialmediasmall.model.PostImageModel;
     import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
     import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -43,7 +45,6 @@
     import com.google.firebase.auth.FirebaseAuth;
     import com.google.firebase.auth.FirebaseUser;
     import com.google.firebase.auth.UserProfileChangeRequest;
-    import com.google.firebase.firestore.CollectionReference;
     import com.google.firebase.firestore.DocumentReference;
     import com.google.firebase.firestore.DocumentSnapshot;
     import com.google.firebase.firestore.EventListener;
@@ -53,17 +54,16 @@
     import com.google.firebase.storage.FirebaseStorage;
     import com.google.firebase.storage.StorageReference;
     import com.google.firebase.storage.UploadTask;
-    import com.theartofdev.edmodo.cropper.CropImage;
 
     import java.util.HashMap;
+    import java.util.List;
     import java.util.Map;
 
     import de.hdodenhof.circleimageview.CircleImageView;
 
 
-    public class ProfileFragment extends Fragment implements IOnUserProfileUid {
+    public class ProfileFragment extends Fragment {
 
-        private static final int REQUEST_CODE_GALLERY = 123;
 
         private TextView nameTv, toolbarNameTv, statusTv, followingCountTv, followersCountTv, postCountTv;
         private CircleImageView profileImage;
@@ -76,6 +76,10 @@
         private String userUid;
         private ImageButton edtProfileBtn;
         private Uri imageUri;
+        private Boolean isFollowed;
+
+        private DocumentReference userRef;
+        List<Object> followersList, followingList;
         FirestoreRecyclerAdapter<PostImageModel, PostImageViewHolder> adapter;
 
 
@@ -149,14 +153,26 @@
             super.onViewCreated(view, savedInstanceState);
             init(view);
 
+            if (IS_SEARCHED_USER) {
+                isMyProfile = false;
+                userUid = USER_ID;
+            } else {
+                isMyProfile = true;
+                userUid = mUser.getUid();
+            }
+
             if (isMyProfile) {
+                edtProfileBtn.setVisibility(View.VISIBLE);
                 followBtn.setVisibility(GONE);
                 countLayout.setVisibility(View.VISIBLE);
             } else {
+                edtProfileBtn.setVisibility(GONE);
                 followBtn.setVisibility(View.VISIBLE);
                 countLayout.setVisibility(GONE);
             }
 
+            userRef = FirebaseFirestore.getInstance().collection("Users")
+                    .document(userUid);
             loadBasicData();
 
             recyclerView.setHasFixedSize(true);
@@ -164,6 +180,52 @@
             loadPostImages();
             recyclerView.setAdapter(adapter);
 
+
+            
+            clickListener();
+
+        }
+
+        private void clickListener() {
+
+            followBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (isFollowed) {
+                        // da follow: gio muon unfollwer
+                        followingList.remove(userUid);
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("following", followingList);
+
+                        userRef.update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                              if (task.isSuccessful()) {
+                                    followBtn.setText(R.string.follow);
+                              } else {
+                                  Log.e("Update following error", "" + task.getException().getMessage());
+                              }
+                            }
+                        });
+
+                    } else {
+                        followingList.add(userUid);
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("following", followingList);
+
+                        userRef.update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    followBtn.setText(R.string.unfollow);
+                                } else {
+                                    Log.e("Update following error", "" + task.getException().getMessage());
+                                }
+                            }
+                        });
+                    }
+                }
+            });
             //edit profile image
             edtProfileBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -171,6 +233,7 @@
                     clickOnEditProfileImage();
                 }
             });
+
 
         }
 
@@ -209,10 +272,10 @@
 
         private void loadPostImages() {
 
+//            DocumentReference reference = FirebaseFirestore.getInstance()
+//                    .collection("Users").document(mUser.getUid());
             DocumentReference reference = FirebaseFirestore.getInstance()
-                    .collection("Users").document(mUser.getUid());
-    //        DocumentReference reference = FirebaseFirestore.getInstance()
-    //                .collection("Users").document(userUid);
+                    .collection("Users").document(userUid);
 
             Query query = reference.collection("Post Images");
 
@@ -240,17 +303,7 @@
 
         }
 
-        @Override
-        public void onReceiveUserUid(String uid, int index) {
-            if (index == 999) {
-                userUid = uid;
-                isMyProfile = false;
-            } else {
-                isMyProfile = true;
-                userUid = mUser.getUid();
-            }
 
-        }
 
         private class PostImageViewHolder extends RecyclerView.ViewHolder {
             private ImageView postImageView;
@@ -264,8 +317,7 @@
         }
 
         private void loadBasicData() {
-           DocumentReference userRef = FirebaseFirestore.getInstance().collection("Users")
-                    .document(mUser.getUid());
+
     //        DocumentReference userRef = FirebaseFirestore.getInstance().collection("Users")
     //                .document(userUid);
 
@@ -275,14 +327,16 @@
                     if (value.exists()) {
                         String name = value.getString("name");
                         String status = value.getString("status");
-                        int followers = Math.toIntExact(value.getLong("followers"));
-                        int following = Math.toIntExact(value.getLong("following"));
+
 
                         nameTv.setText(name);
                         toolbarNameTv.setText(name);
                         statusTv.setText(status);
-                        followingCountTv.setText(String.valueOf(following));
-                        followersCountTv.setText(String.valueOf(followers));
+                        followersList = (List<Object>) value.get("followers");
+                        followingList = (List<Object>) value.get("following");
+
+                        followingCountTv.setText(String.valueOf(followingList.size()));
+                        followersCountTv.setText(String.valueOf(followersList.size()));
 
                         String profileURL = value.getString("profileImage");
                         Glide.with(getContext().getApplicationContext())
@@ -291,6 +345,15 @@
                                 .timeout(6500)
                                 .into(profileImage);
 
+
+
+                        if  (followingList.contains(userUid)) {
+                            followBtn.setText(R.string.unfollow);
+                            isFollowed = true;
+                        } else {
+                            isFollowed = false;
+                            followBtn.setText(R.string.follow);
+                        }
                     } else {
                         Log.e("Error", error.toString());
                     }

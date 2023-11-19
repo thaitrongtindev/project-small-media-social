@@ -1,43 +1,37 @@
 package com.example.socialmediasmall;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TableLayout;
-import android.widget.Toast;
 
 import com.example.socialmediasmall.adapter.ViewPagerAdapter;
-import com.example.socialmediasmall.fragment.AddFragment;
-import com.example.socialmediasmall.fragment.CreateAccountFragment;
+import com.example.socialmediasmall.fragment.SearchFragment;
 import com.example.socialmediasmall.interfaceListener.IOnDataPass;
-import com.example.socialmediasmall.interfaceListener.IOnUserProfileUid;
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 
 public class MainActivity extends AppCompatActivity implements IOnDataPass {
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
+
     private Toolbar toolbar;
     private ViewPagerAdapter viewPagerAdapter;
     public static boolean isGalleryOpened = false;
 
-    private IOnUserProfileUid iOnUserProfileUid;
+    public static String USER_ID;
+    public static Boolean IS_SEARCHED_USER = false;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         init();
 
@@ -160,11 +154,10 @@ public class MainActivity extends AppCompatActivity implements IOnDataPass {
 
     @Override
     public void onChange(String uid) {
-        iOnUserProfileUid.onReceiveUserUid(uid, 999);
+        USER_ID = uid;
+        IS_SEARCHED_USER = true;
         viewPager2.setCurrentItem(4);
     }
 
-    public void onUserProfileUid(IOnUserProfileUid iOnUserProfileUid) {
-        this.iOnUserProfileUid = iOnUserProfileUid;
-    }
+
 }

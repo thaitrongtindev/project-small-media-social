@@ -1,5 +1,6 @@
 package com.example.socialmediasmall.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SearchFragment extends Fragment implements IOnUserClick {
+public class SearchFragment extends Fragment  {
 
 
     private SearchView searchView;
@@ -44,6 +45,14 @@ public class SearchFragment extends Fragment implements IOnUserClick {
 
     private IOnDataPass iOnDataPass;
 
+
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        iOnDataPass = (IOnDataPass) context;
+    }
 
     public SearchFragment() {
         // Required empty public constructor
@@ -75,8 +84,18 @@ public class SearchFragment extends Fragment implements IOnUserClick {
 
         loadUserData();
         searchUser();
+        clickListener();
 
 
+    }
+
+    private void clickListener() {
+        userAdapter.IOnUserClicked(new IOnUserClick() {
+            @Override
+            public void onClicked(String uid) {
+                iOnDataPass.onChange(uid);
+            }
+        });
     }
 
     private void searchUser() {
@@ -156,8 +175,5 @@ public class SearchFragment extends Fragment implements IOnUserClick {
 
 
     // thuc hien click vao item_user
-    @Override
-    public void onClicked(String uid) {
-        iOnDataPass.onChange(uid);
-    }
+
 }

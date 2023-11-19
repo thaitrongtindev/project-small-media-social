@@ -24,11 +24,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     private List<User> mListUser;
     private IOnUserClick iOnUserClick;
-    FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
 
+    FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
 
     public UserAdapter(List<User> mListUser) {
         this.mListUser = mListUser;
+
     }
 
     @NonNull
@@ -88,17 +89,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             relativeLayout = itemView.findViewById(R.id.relativeLayout);
         }
 
-        public void clickListener(int position, String uid) {
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    iOnUserClick.onClicked(uid);
-                }
-            });
-        }
+
     }
 
-//    public void IOnUserClicked(IOnUserClick iOnUserClick) {
-//        this.iOnUserClick = iOnUserClick;
-//    }
+    public void IOnUserClicked(IOnUserClick iOnUserClick) {
+       this.iOnUserClick = iOnUserClick;
+    }
 }
