@@ -17,6 +17,8 @@ import android.view.ViewGroup;
 import com.example.socialmediasmall.R;
 import com.example.socialmediasmall.adapter.UserAdapter;
 import com.example.socialmediasmall.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -36,7 +38,7 @@ public class SearchFragment extends Fragment {
     private RecyclerView recyclerView;
     private UserAdapter userAdapter;
     private List<User> mListUser;
-    CollectionReference collectionReference;FirebaseFirestore.getInstance().collection("Users");
+    CollectionReference collectionReference;
 
 
     public SearchFragment() {
@@ -65,6 +67,7 @@ public class SearchFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         init(view);
+        collectionReference = FirebaseFirestore.getInstance().collection("Users");
 
         loadUserData();
         searchUser();
@@ -78,11 +81,32 @@ public class SearchFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
 
+                collectionReference.orderBy("search").startAt(query).endAt(query + "\uf8ff")
+                        .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    mListUser.clear();
+                                    for (DocumentSnapshot snapshot : task.getResult()) {
+                                        if (!snapshot.exists()) {
+                                            return;
+                                        }
+
+                                        User users = snapshot.toObject(User.class);
+                                        mListUser.add(users);
+                                    }
+                                    userAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        });
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                if (newText.equals("")) {
+                    loadUserData();
+                }
                 return false;
             }
         });

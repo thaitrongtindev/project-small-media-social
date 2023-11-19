@@ -38,10 +38,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
+
         if (mListUser.get(position).getUid().equals(mUser.getUid())) {
             holder.relativeLayout.setVisibility(View.GONE);
-        }
+            holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+        } else {
+            holder.relativeLayout.setVisibility(View.VISIBLE);
 
+        }
         holder.nameTv.setText(mListUser.get(position).getName());
         holder.statusTv.setText(mListUser.get(position).getStatus());
 
@@ -50,6 +54,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 .placeholder(R.drawable.ic_person)
                 .timeout(6500)
                 .into(holder.profileImage);
+
+       /*
+       nghĩa là người dùng đang xem là chính người dùng hiện tại, và trong trường hợp này,
+       holder.relativeLayout sẽ được đặt là View.GONE, làm ẩn đi một phần tử giao diện người dùng nào đó
+        */
+
     }
 
     @Override
