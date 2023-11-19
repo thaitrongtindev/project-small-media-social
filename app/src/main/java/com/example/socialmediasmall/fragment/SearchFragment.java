@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 
 import com.example.socialmediasmall.R;
 import com.example.socialmediasmall.adapter.UserAdapter;
+import com.example.socialmediasmall.interfaceListener.IOnUserClick;
 import com.example.socialmediasmall.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SearchFragment extends Fragment {
+public class SearchFragment extends Fragment implements IOnUserClick {
 
 
     private SearchView searchView;
@@ -146,6 +147,14 @@ public class SearchFragment extends Fragment {
         mListUser = new ArrayList<>();
         userAdapter = new UserAdapter(mListUser);
         recyclerView.setAdapter(userAdapter);
+
+    }
+
+
+
+    // thuc hien click vao item_user
+    @Override
+    public void onClicked(int position, String uid) {
 
     }
 }

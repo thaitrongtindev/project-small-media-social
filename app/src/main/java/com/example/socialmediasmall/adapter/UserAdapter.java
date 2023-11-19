@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.socialmediasmall.R;
+import com.example.socialmediasmall.interfaceListener.IOnUserClick;
 import com.example.socialmediasmall.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,6 +23,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
     private List<User> mListUser;
+    private IOnUserClick iOnUserClick;
     FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
 
 
@@ -39,6 +41,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
 
+         /*
+       nghĩa là người dùng đang xem là chính người dùng hiện tại, và trong trường hợp này,
+       holder.relativeLayout sẽ được đặt là View.GONE, làm ẩn đi một phần tử giao diện người dùng nào đó
+        */
         if (mListUser.get(position).getUid().equals(mUser.getUid())) {
             holder.relativeLayout.setVisibility(View.GONE);
             holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
@@ -55,11 +61,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 .timeout(6500)
                 .into(holder.profileImage);
 
-       /*
-       nghĩa là người dùng đang xem là chính người dùng hiện tại, và trong trường hợp này,
-       holder.relativeLayout sẽ được đặt là View.GONE, làm ẩn đi một phần tử giao diện người dùng nào đó
-        */
 
+        // bat sự kiện click vào item_user
+        holder.clickListener(position, mListUser.get(position).getUid());
     }
 
     @Override
@@ -79,5 +83,18 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             statusTv = itemView.findViewById(R.id.statusTv);
             relativeLayout = itemView.findViewById(R.id.relativeLayout);
         }
+
+        public void clickListener(int position, String uid) {
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    iOnUserClick.onClicked(position, uid);
+                }
+            });
+        }
     }
+
+//    public void IOnUserClicked(IOnUserClick iOnUserClick) {
+//        this.iOnUserClick = iOnUserClick;
+//    }
 }
