@@ -2,16 +2,17 @@ package com.example.socialmediasmall.model;
 
 public class User {
 
-    private String email,name, profileImage, uid;
+    private String email,name, profileImage, uid, status;
 
     public User() {
     }
 
-    public User(String email, String name, String profileImage, String uid) {
+    public User(String email, String name, String profileImage, String uid, String status) {
         this.email = email;
         this.name = name;
         this.profileImage = profileImage;
         this.uid = uid;
+        this.status = status;
     }
 
     public String getEmail() {
@@ -44,5 +45,13 @@ public class User {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

@@ -99,21 +99,24 @@ public class HomeFragment extends Fragment {
                     }
 
                     HomeModel homeModel = snapshot.toObject(HomeModel.class);
-                    mListHomeModels.add(new HomeModel(homeModel.getUsername(),
-                            homeModel.getTimestamp(),
-                            homeModel.getProfileImage(),
-                            homeModel.getImageUrl(),
-                            homeModel.getUid(),
-                            homeModel.getLikeCount(),
-                            homeModel.getComments(),
-                            homeModel.getDescription(),
-                            homeModel.getId()
-                    ));
+                    Log.e("Home", "" +homeModel.getUsername());
+//                    mListHomeModels.add(new HomeModel(homeModel.getUsername(),
+//                            homeModel.getTimestamp(),
+//                            homeModel.getProfileImage(),
+//                            homeModel.getImageUrl(),
+//                            homeModel.getUid(),
+//                            homeModel.getLikeCount(),
+//                            homeModel.getComments(),
+//                            homeModel.getDescription(),
+//                            homeModel.getId()
+//                    ));
+                    mListHomeModels.add(homeModel);
 
                 }
                 homeFragmentAdapter.notifyDataSetChanged();
                 LIST_SIZE = mListHomeModels.size();
                 Log.e("LIST_SIZE", "" +mListHomeModels.size());
+
 
             }
         });

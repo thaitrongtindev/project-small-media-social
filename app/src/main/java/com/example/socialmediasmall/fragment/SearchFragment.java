@@ -9,11 +9,24 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.socialmediasmall.R;
+import com.example.socialmediasmall.adapter.UserAdapter;
+import com.example.socialmediasmall.model.User;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class SearchFragment extends Fragment {
@@ -21,7 +34,10 @@ public class SearchFragment extends Fragment {
 
     private SearchView searchView;
     private RecyclerView recyclerView;
-    private
+    private UserAdapter userAdapter;
+    private List<User> mListUser;
+    CollectionReference collectionReference;FirebaseFirestore.getInstance().collection("Users");
+
 
     public SearchFragment() {
         // Required empty public constructor
@@ -50,10 +66,18 @@ public class SearchFragment extends Fragment {
 
         init(view);
 
+        loadUserData();
+        searchUser();
+
+
+    }
+
+    private void searchUser() {
         // listener event searchview
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+
                 return false;
             }
 
@@ -64,11 +88,40 @@ public class SearchFragment extends Fragment {
         });
     }
 
+    private void loadUserData() {
+
+
+        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    return;
+                }
+                if (value == null) {
+                    return;
+                }
+                mListUser.clear();
+                for (QueryDocumentSnapshot snapshot : value) {
+                    User users = snapshot.toObject(User.class);
+                    Log.e("User", users.getEmail());
+                    Log.e("LítUser", mListUser.toString());
+                    mListUser.add(users);
+
+                }
+                userAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
     private void init(View view) {
         searchView = view.findViewById(R.id.searchView);
         recyclerView = view.findViewById(R.id.recyclerView);
 
         recyclerView.setHasFixedSize(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mListUser = new ArrayList<>();
+        userAdapter = new UserAdapter(mListUser);
+        recyclerView.setAdapter(userAdapter);
+
     }
 }

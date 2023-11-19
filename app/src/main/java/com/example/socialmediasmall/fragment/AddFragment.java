@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.socialmediasmall.MainActivity;
 import com.example.socialmediasmall.R;
 import com.example.socialmediasmall.adapter.GalleryAdapter;
 import com.example.socialmediasmall.interfaceListener.ISendImage;
@@ -70,6 +71,7 @@ public class AddFragment extends Fragment implements ISendImage {
     private ImageButton backBtn, nextBtn;
     private GalleryAdapter adapter;
     private List<GalleryImages> listImages;
+
     private static final int REQUEST_CODE_GALLERY = 123;
 
     private Uri imageUri;
@@ -130,7 +132,6 @@ public class AddFragment extends Fragment implements ISendImage {
 
         recyclerView.setAdapter(adapter);
         clickListener();
-        openGallery();
     }
 
     private void clickListener() {
@@ -220,7 +221,22 @@ public class AddFragment extends Fragment implements ISendImage {
 
 
     // Trong phương thức bạn muốn mở Gallery (ví dụ: trong một sự kiện nhấn nút)
-    private void openGallery() {
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MainActivity mainActivity = (MainActivity) getActivity();
+
+
+
+        if (mainActivity.isGalleryOpened == false) {
+            openGallery();
+            mainActivity.isGalleryOpened = true;
+        }
+    }
+
+    public void openGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
         startActivityForResult(intent, REQUEST_CODE_GALLERY);
@@ -228,7 +244,7 @@ public class AddFragment extends Fragment implements ISendImage {
 
     // Xử lý kết quả sau khi người dùng đã chọn hình ảnh từ Gallery
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public  void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_CODE_GALLERY && resultCode == Activity.RESULT_OK && data != null) {

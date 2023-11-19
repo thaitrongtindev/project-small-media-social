@@ -11,8 +11,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TableLayout;
+import android.widget.Toast;
 
 import com.example.socialmediasmall.adapter.ViewPagerAdapter;
+import com.example.socialmediasmall.fragment.AddFragment;
 import com.example.socialmediasmall.fragment.CreateAccountFragment;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -26,6 +28,10 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager2 viewPager2;
     private Toolbar toolbar;
     private ViewPagerAdapter viewPagerAdapter;
+    public static boolean isGalleryOpened = false;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,41 +53,17 @@ public class MainActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 // Thay đổi tab được chọn khi trang ViewPager2 thay đổi
                 tabLayout.selectTab(tabLayout.getTabAt(position));
-                Log.e("ViewPager2", "Page selected: " + position);
+                 isGalleryOpened = false;
+
 
             }
+
+
         });
 
         // Thêm tabs cho TabLayout
         addTabs();
-//        new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
-//            @Override
-//            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-//                switch (position) {
-//                    case 0:
-//                        tab.setText("Home");
-//                        tab.setIcon(R.drawable.ic_home);
-//                        break;
-//                    case 1:
-//                        tab.setText("Search");
-//                        tab.setIcon(R.drawable.ic_search);
-//                        break;
-//                    case 2:
-//                        tab.setText("Add");
-//                        tab.setIcon(R.drawable.icons8_add);
-//                        break;
-//                    case 3:
-//                        tab.setText("Heart");
-//                        tab.setIcon(R.drawable.ic_heart_fill);
-//                        break;
-//                    case 4:
-//                        tab.setText("Help");
-//                        tab.setIcon(android.R.drawable.ic_menu_help);
-//                        break;
-//                }
-//
-//            }
-//        });
+
 
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_home);
 
@@ -91,6 +73,10 @@ public class MainActivity extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 // Di chuyển đến trang tương ứng khi người dùng chọn tab
                 viewPager2.setCurrentItem(tab.getPosition()); //
+                 isGalleryOpened = false;
+
+
+
                 switch (tab.getPosition()) {
                     case 0:
                         tab.setIcon(R.drawable.ic_home_24);
