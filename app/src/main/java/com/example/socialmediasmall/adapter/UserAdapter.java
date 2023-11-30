@@ -1,5 +1,6 @@
 package com.example.socialmediasmall.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +67,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
        holder.itemView.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
-               iOnUserClick.onClicked(mListUser.get(position).getUid());
+               iOnUserClick.onClicked(mListUser.get(position).getUid()); // lay uid cua user khac
+               Log.e("UID ADAPTER", ""+ mListUser.get(position).getUid() );
            }
        });
     }

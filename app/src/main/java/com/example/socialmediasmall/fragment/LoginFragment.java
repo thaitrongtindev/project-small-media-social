@@ -52,9 +52,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -351,14 +353,16 @@ public class LoginFragment extends Fragment {
     }
 
     private void userProfile(FirebaseUser mUser) {
+        List<String> follower = new ArrayList<>();
+        List<String> following = new ArrayList<>();
 
         Map<String, Object> map = new HashMap<>();
         map.put("name", mUser.getDisplayName());
         map.put("email", mUser.getEmail());
         map.put("profileImage", String.valueOf(mUser.getPhotoUrl()));
         map.put("uid", mUser.getUid());
-        map.put("following", 0);
-        map.put("followers", 0);
+        map.put("following", following);
+        map.put("followers", follower);
         map.put("status", "");
         FirebaseFirestore.getInstance().collection("Users").document(mUser.getUid())
                 .set(map)

@@ -154,8 +154,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataPass {
 
     @Override
     public void onChange(String uid) {
-        USER_ID = uid;
-        IS_SEARCHED_USER = true;
+        USER_ID = uid; // uid cua user khac: la id cua user minh nhan vao
+        IS_SEARCHED_USER = true;// khi có sự kiện click vào một user trong SearchFragment
         viewPager2.setCurrentItem(4);
     }
 

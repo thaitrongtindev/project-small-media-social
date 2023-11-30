@@ -93,7 +93,7 @@ public class SearchFragment extends Fragment  {
         userAdapter.IOnUserClicked(new IOnUserClick() {
             @Override
             public void onClicked(String uid) {
-                iOnDataPass.onChange(uid);
+                iOnDataPass.onChange(uid); // uid cua user
             }
         });
     }

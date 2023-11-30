@@ -113,10 +113,10 @@ public class HomeFragment extends Fragment {
                     mListHomeModels.add(homeModel);
 
                 }
-                homeFragmentAdapter.notifyDataSetChanged();
+
                 LIST_SIZE = mListHomeModels.size();
                 Log.e("LIST_SIZE", "" +mListHomeModels.size());
-
+                homeFragmentAdapter.notifyDataSetChanged();
 
             }
         });
