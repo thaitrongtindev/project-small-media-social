@@ -6,7 +6,13 @@ import static com.example.socialmediasmall.MainActivity.IS_SEARCHED_USER;
 import static com.example.socialmediasmall.MainActivity.USER_ID;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -35,6 +41,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.socialmediasmall.R;
 import com.example.socialmediasmall.model.PostImageModel;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -55,6 +65,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,6 +80,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileFragment extends Fragment {
 
 
+    private static final String PREF_STORED =  "pref_stored";
+    private static final String PREF_URL = "pref_url";
+    private static final String PREF_NAME = "pref_name";
+    private static final String PREF_DIRECTORY = "pref_directory" ;
     private TextView nameTv, toolbarNameTv, statusTv, followingCountTv, followersCountTv, postCountTv;
     private CircleImageView profileImage;
     private Button followBtn;
@@ -424,6 +442,21 @@ public class ProfileFragment extends Fragment {
                             .load(profileURL)
                             .placeholder(R.drawable.ic_person)
                             .timeout(6500)
+                            .listener(new RequestListener<Drawable>() {
+                                // lắng nghe ảnh được load thành công hay thấy bại
+                                @Override
+                                public boolean onLoadFailed(@Nullable GlideException e, @Nullable Object model, @NonNull Target<Drawable> target, boolean isFirstResource) {
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(@NonNull Drawable resource, @NonNull Object model, Target<Drawable> target, @NonNull DataSource dataSource, boolean isFirstResource) {
+                                    Bitmap bitmap = ((BitmapDrawable)resource).getBitmap();
+                                    storeProfileImage(bitmap, profileURL);
+
+                                    return false;
+                                }
+                            })
                             .into(profileImage);
 
 
@@ -444,6 +477,49 @@ public class ProfileFragment extends Fragment {
 
     }
 
+    private void storeProfileImage(Bitmap bitmap, String url) {
+
+
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        boolean isStored  = sharedPreferences.getBoolean(PREF_STORED, false);
+        String urlString = sharedPreferences.getString(PREF_URL, "");
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        if (isStored && urlString.equals(url))
+            return;
+
+        ContextWrapper contextWrapper = new ContextWrapper(getContext().getApplicationContext());
+        File directory = contextWrapper.getDir("image_data", Context.MODE_PRIVATE);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+
+        File path = new File(directory, "profile.png");
+
+        FileOutputStream fileOutputStream = null;
+
+        try {
+            fileOutputStream = new FileOutputStream(path);
+
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } finally {
+            assert fileOutputStream != null ;
+            try {
+                fileOutputStream.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        
+        editor.putBoolean(PREF_STORED, true);
+        editor.putString(PREF_URL, url);
+        editor.putString(PREF_DIRECTORY, directory.getAbsolutePath());
+        editor.apply();
+
+
+    }
     private void init(View view) {
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
