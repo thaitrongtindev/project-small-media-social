@@ -1,9 +1,17 @@
 package com.example.socialmediasmall;
 
+import static com.example.socialmediasmall.utils.Constants.PREF_DIRECTORY;
+import static com.example.socialmediasmall.utils.Constants.PREF_NAME;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -11,6 +19,10 @@ import com.example.socialmediasmall.adapter.ViewPagerAdapter;
 import com.example.socialmediasmall.fragment.SearchFragment;
 import com.example.socialmediasmall.interfaceListener.IOnDataPass;
 import com.google.android.material.tabs.TabLayout;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 
 public class MainActivity extends AppCompatActivity implements IOnDataPass {
@@ -84,9 +96,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataPass {
                     case 3:
                         tab.setIcon(R.drawable.ic_heart_fill);
                         break;
-                    case 4:
-                        tab.setIcon(android.R.drawable.ic_menu_help);
-                        break;
+//                    case 4:
+//                        tab.setIcon(android.R.drawable.ic_menu_help);
+//                        break;
                 }
             }
 
@@ -105,9 +117,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataPass {
                     case 3:
                         tab.setIcon(R.drawable.ic_heart);
                         break;
-                    case 4:
-                        tab.setIcon(R.drawable.ic_heart_fill);
-                        break;
+//                    case 4:
+//                        //tab.setIcon(R.drawable.ic_heart_fill);
+//                        break;
                 }
             }
 
@@ -124,7 +136,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataPass {
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.icons8_search_24));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.icons8_add));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_heart));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_heart_fill));
+
+        SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        String directory = sharedPreferences.getString(PREF_DIRECTORY, "");
+
+        Bitmap bitmap = loadProfileImage(directory);
+        Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+        tabLayout.addTab(tabLayout.newTab().setIcon(drawable));
 
 
         tabLayout.setTabGravity(TabLayout.GRAVITY_CENTER);
@@ -159,5 +177,14 @@ public class MainActivity extends AppCompatActivity implements IOnDataPass {
         viewPager2.setCurrentItem(4);
     }
 
+    private Bitmap loadProfileImage(String directory) {
+        File file = new File(directory, "profile.png");
+        try {
+                return BitmapFactory.decodeStream(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 }

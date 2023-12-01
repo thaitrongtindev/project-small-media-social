@@ -177,7 +177,7 @@ public class AddFragment extends Fragment implements ISendImage {
 
         map.put("profileImage", String.valueOf(mUser.getPhotoUrl()));
         map.put("likeCount", 0);
-        map.put("username", mUser.getDisplayName());
+        map.put("name", mUser.getDisplayName());
 
 
         // gui data len firebasefirestore

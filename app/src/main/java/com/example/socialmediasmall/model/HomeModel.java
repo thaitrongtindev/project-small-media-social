@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class HomeModel {
 
-    private String username;
+    private String name;
     @ServerTimestamp
     private Date timestamp;
     private String profileImage;
@@ -18,8 +18,8 @@ public class HomeModel {
     public HomeModel() {
     }
 
-    public HomeModel(String username, Date timestamp, String profileImage, String imageUrl, String uid, int likeCount, String comments, String description, String id) {
-        this.username = username;
+    public HomeModel(String name, Date timestamp, String profileImage, String imageUrl, String uid, int likeCount, String comments, String description, String id) {
+        this.name = name;
         this.timestamp = timestamp;
         this.profileImage = profileImage;
         this.imageUrl = imageUrl;
@@ -30,12 +30,12 @@ public class HomeModel {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getName() {
+        return name;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Date getTimestamp() {

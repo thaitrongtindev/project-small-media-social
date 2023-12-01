@@ -4,6 +4,9 @@ import static android.view.View.GONE;
 
 import static com.example.socialmediasmall.MainActivity.IS_SEARCHED_USER;
 import static com.example.socialmediasmall.MainActivity.USER_ID;
+import static com.example.socialmediasmall.utils.Constants.PREF_DIRECTORY;
+import static com.example.socialmediasmall.utils.Constants.PREF_STORED;
+import static com.example.socialmediasmall.utils.Constants.PREF_URL;
 
 import android.app.Activity;
 import android.content.Context;
@@ -47,6 +50,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.socialmediasmall.R;
 import com.example.socialmediasmall.model.PostImageModel;
+import com.example.socialmediasmall.utils.Constants;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -80,10 +84,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileFragment extends Fragment {
 
 
-    private static final String PREF_STORED =  "pref_stored";
-    private static final String PREF_URL = "pref_url";
-    private static final String PREF_NAME = "pref_name";
-    private static final String PREF_DIRECTORY = "pref_directory" ;
     private TextView nameTv, toolbarNameTv, statusTv, followingCountTv, followersCountTv, postCountTv;
     private CircleImageView profileImage;
     private Button followBtn;
@@ -247,7 +247,7 @@ public class ProfileFragment extends Fragment {
                     Map<String, Object> map = new HashMap<>();
                     map.put("followers", followersList);
 
-                    final  Map<String, Object> map2 = new HashMap<>();
+                    final Map<String, Object> map2 = new HashMap<>();
                     map2.put("following", followingListV2);
 
                     userRef.update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -283,7 +283,7 @@ public class ProfileFragment extends Fragment {
                     Map<String, Object> map = new HashMap<>();
                     map.put("followers", followersList);
 
-                    final   Map<String, Object> map2 = new HashMap<>();
+                    final Map<String, Object> map2 = new HashMap<>();
                     map2.put("following", followingListV2);
 
 
@@ -427,8 +427,8 @@ public class ProfileFragment extends Fragment {
                     followersList = (List<String>) value.get("followers");
                     followingList = (List<String>) value.get("following");
 
-                    Log.e("followersList", ""+followersList.size() );
-                    Log.e("followingList", ""+followingList.size() );
+                    Log.e("followersList", "" + followersList.size());
+                    Log.e("followingList", "" + followingList.size());
 
 
                     followersCountTv.setText("" + followersList.size());
@@ -438,7 +438,7 @@ public class ProfileFragment extends Fragment {
 
 
                     String profileURL = value.getString("profileImage");
-                    Glide.with(requireContext())
+                    Glide.with(getContext().getApplicationContext())
                             .load(profileURL)
                             .placeholder(R.drawable.ic_person)
                             .timeout(6500)
@@ -451,7 +451,9 @@ public class ProfileFragment extends Fragment {
 
                                 @Override
                                 public boolean onResourceReady(@NonNull Drawable resource, @NonNull Object model, Target<Drawable> target, @NonNull DataSource dataSource, boolean isFirstResource) {
-                                    Bitmap bitmap = ((BitmapDrawable)resource).getBitmap();
+                                    Bitmap bitmap = ((BitmapDrawable) resource).getBitmap();
+                                    // chuyển đổi resourse sang kiểu bitmap
+
                                     storeProfileImage(bitmap, profileURL);
 
                                     return false;
@@ -480,21 +482,24 @@ public class ProfileFragment extends Fragment {
     private void storeProfileImage(Bitmap bitmap, String url) {
 
 
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        boolean isStored  = sharedPreferences.getBoolean(PREF_STORED, false);
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences(Constants.PREF_NAME, Context.MODE_PRIVATE);
+        boolean isStored = sharedPreferences.getBoolean(PREF_STORED, false);
         String urlString = sharedPreferences.getString(PREF_URL, "");
         SharedPreferences.Editor editor = sharedPreferences.edit();
-
+        // kiểm tra image với url tương tự đã đc lưu chưa?
         if (isStored && urlString.equals(url))
             return;
 
+        if (IS_SEARCHED_USER) {
+            return;
+        }
         ContextWrapper contextWrapper = new ContextWrapper(getContext().getApplicationContext());
         File directory = contextWrapper.getDir("image_data", Context.MODE_PRIVATE);
         if (!directory.exists()) {
             directory.mkdir();
         }
 
-        File path = new File(directory, "profile.png");
+        File path = new File(directory, "profile.png"); // có tệp là profile.pgn
 
         FileOutputStream fileOutputStream = null;
 
@@ -502,24 +507,27 @@ public class ProfileFragment extends Fragment {
             fileOutputStream = new FileOutputStream(path);
 
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+            // nén data hình ảnh từ đối tương bitmap thành kiểu PNG và ghi nó vào file "profile.png"
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } finally {
-            assert fileOutputStream != null ;
+            assert fileOutputStream != null;
             try {
                 fileOutputStream.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        
+
         editor.putBoolean(PREF_STORED, true);
         editor.putString(PREF_URL, url);
         editor.putString(PREF_DIRECTORY, directory.getAbsolutePath());
+        /// Lưu đường dẫn tới thư mục chứa hình ảnh đã lưu.
         editor.apply();
 
 
     }
+
     private void init(View view) {
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);

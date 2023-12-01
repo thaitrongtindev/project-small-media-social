@@ -46,7 +46,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
     @Override
     public void onBindViewHolder(@NonNull HomeViewHolder holder, int position) {
 
-        holder.usernameTv.setText(listHomeModel.get(position).getUsername());
+        holder.usernameTv.setText(listHomeModel.get(position).getName());
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
         String s = sdf.format(listHomeModel.get(position).getTimestamp());
         holder.timeTv.setText(s);

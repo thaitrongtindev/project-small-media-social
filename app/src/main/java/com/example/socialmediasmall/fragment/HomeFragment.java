@@ -99,17 +99,17 @@ public class HomeFragment extends Fragment {
                     }
 
                     HomeModel homeModel = snapshot.toObject(HomeModel.class);
-                    Log.e("Home", "" +homeModel.getUsername());
-//                    mListHomeModels.add(new HomeModel(homeModel.getUsername(),
-//                            homeModel.getTimestamp(),
-//                            homeModel.getProfileImage(),
-//                            homeModel.getImageUrl(),
-//                            homeModel.getUid(),
-//                            homeModel.getLikeCount(),
-//                            homeModel.getComments(),
-//                            homeModel.getDescription(),
-//                            homeModel.getId()
-//                    ));
+                    Log.e("Home", "" +homeModel.getName());
+                    mListHomeModels.add(new HomeModel(homeModel.getName(),
+                            homeModel.getTimestamp(),
+                            homeModel.getProfileImage(),
+                            homeModel.getImageUrl(),
+                            homeModel.getUid(),
+                            homeModel.getLikeCount(),
+                            homeModel.getComments(),
+                            homeModel.getDescription(),
+                            homeModel.getId()
+                    ));
                     mListHomeModels.add(homeModel);
 
                 }
