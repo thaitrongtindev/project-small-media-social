@@ -154,7 +154,9 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
                 @Override
                 public void onClick(View view) {
                     String comment = commentEdit.getText().toString();
-                    iOnPressed.onComment(position, id, uid,comment);
+                    iOnPressed.onComment(position, id, uid,comment, commentLayout, commentEdit);
+
+
                 }
             });
         }

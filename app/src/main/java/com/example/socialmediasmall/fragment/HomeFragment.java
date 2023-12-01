@@ -14,12 +14,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.socialmediasmall.R;
 import com.example.socialmediasmall.adapter.HomeFragmentAdapter;
 import com.example.socialmediasmall.interfaceListener.IOnPressed;
 import com.example.socialmediasmall.model.HomeModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -32,7 +36,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -101,7 +104,7 @@ public class HomeFragment extends Fragment {
             }
 
             @Override
-            public void onComment(int position, String id, String uid, String comment) {
+            public void onComment(int position, String id, String uid, String comment, LinearLayout commentLayout, EditText commentEdit) {
                 if (comment.isEmpty() != comment.equals(" ")) {
                     Toast.makeText(getContext(), "Can not send empty", Toast.LENGTH_SHORT).show();
                     return;
@@ -121,7 +124,17 @@ public class HomeFragment extends Fragment {
                 map.put("postID", id);
 
                 collectionReference.document(commentID)
-                        .set(map);
+                        .set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    commentEdit.setText("");
+                                    commentLayout.setVisibility(View.GONE);
+                                } else {
+                                    Toast.makeText(getContext(), "Failed to comment", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
 
 
 
