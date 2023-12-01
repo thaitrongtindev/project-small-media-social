@@ -58,12 +58,13 @@
         android:layout_below="@id/imageView"
         android:orientation="horizontal">
 
-        <ImageButton
+        <CheckBox
             android:id="@+id/likeBtn"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:background="@drawable/ic_heart" />
+            android:button="@drawable/heart_check"
+            android:checked="true" />
 
         <ImageButton
             android:id="@+id/commentBtn"
@@ -99,6 +100,37 @@
         android:paddingEnd="8dp"
         android:text="@string/_100_likes"
         android:textStyle="bold" />
+
+
+    <LinearLayout
+        android:id="@+id/commentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_below="@id/likeCountTv"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/commentEdit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_below="@id/likeCountTv"
+            android:layout_margin="6dp"
+            android:background="@drawable/text_box"
+            android:hint="Type your comment"
+            android:padding="12dp" />
+
+    <ImageButton
+        android:id="@+id/commentSendBtn"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="10dp"
+        android:layout_below="@id/likeCountTv"
+        android:background="@drawable/ic_send_v1" />
+
+    </LinearLayout>
 
 
 </RelativeLayout>

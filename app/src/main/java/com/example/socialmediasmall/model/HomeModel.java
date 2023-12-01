@@ -3,6 +3,7 @@ package com.example.socialmediasmall.model;
 import com.google.firebase.firestore.ServerTimestamp;
 
 import java.util.Date;
+import java.util.List;
 
 public class HomeModel {
 
@@ -12,22 +13,22 @@ public class HomeModel {
     private String profileImage;
     private String imageUrl;
     private String uid;
-    private int likeCount;
     private String comments, description, id;
+    private List<String> likes;
 
     public HomeModel() {
     }
 
-    public HomeModel(String name, Date timestamp, String profileImage, String imageUrl, String uid, int likeCount, String comments, String description, String id) {
+    public HomeModel(String name, Date timestamp, String profileImage, String imageUrl, String uid, String comments, String description, String id, List<String> likes) {
         this.name = name;
         this.timestamp = timestamp;
         this.profileImage = profileImage;
         this.imageUrl = imageUrl;
         this.uid = uid;
-        this.likeCount = likeCount;
         this.comments = comments;
         this.description = description;
         this.id = id;
+        this.likes = likes;
     }
 
     public String getName() {
@@ -58,8 +59,8 @@ public class HomeModel {
         return imageUrl;
     }
 
-    public void setImageUrl(String postImage) {
-        this.imageUrl = postImage;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public String getUid() {
@@ -68,14 +69,6 @@ public class HomeModel {
 
     public void setUid(String uid) {
         this.uid = uid;
-    }
-
-    public int getLikeCount() {
-        return likeCount;
-    }
-
-    public void setLikeCount(int likeCount) {
-        this.likeCount = likeCount;
     }
 
     public String getComments() {
@@ -100,5 +93,13 @@ public class HomeModel {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public List<String> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<String> likes) {
+        this.likes = likes;
     }
 }
