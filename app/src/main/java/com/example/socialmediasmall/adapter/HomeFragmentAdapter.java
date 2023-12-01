@@ -31,6 +31,8 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
     private List<HomeModel> listHomeModel;
     private Context context;
 
+    private On
+
     public HomeFragmentAdapter(List<HomeModel> listHomeModel, Context context) {
         this.listHomeModel = listHomeModel;
         this.context = context;
