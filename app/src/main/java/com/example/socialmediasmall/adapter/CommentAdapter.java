@@ -1,5 +1,6 @@
 package com.example.socialmediasmall.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,10 +10,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.socialmediasmall.R;
+import com.example.socialmediasmall.model.CommentModel;
+
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
+
+    private Context context;
+    private List<CommentModel> mListComment;
+
+    public CommentAdapter(Context context, List<CommentModel> mListComment) {
+        this.context = context;
+        this.mListComment = mListComment;
+    }
 
     @NonNull
     @Override
@@ -28,7 +40,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mListComment.size();
     }
 
     public class CommentViewHolder extends RecyclerView.ViewHolder {
