@@ -5,16 +5,26 @@
     android:layout_height="match_parent"
     tools:context=".fragment.CommentFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/commentRecyclerView"
+    <RelativeLayout
+        android:id="@+id/layout"
+        android:layout_above="@id/commentLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/commentLayout"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="-253dp" />
+        android:layout_marginBottom="13dp"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/commentRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="-2dp"
+            android:layout_marginBottom="-253dp" />
+    </RelativeLayout>
+
 
     <LinearLayout
         android:id="@+id/commentLayout"

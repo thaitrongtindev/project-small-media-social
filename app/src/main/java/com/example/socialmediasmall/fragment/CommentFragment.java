@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -49,6 +50,7 @@ public class CommentFragment extends Fragment {
     private FirebaseUser mUser;
     private String id, uid;
     private CollectionReference collectionReference;
+
     public CommentFragment() {
         // Required empty public constructor
     }
@@ -108,6 +110,7 @@ public class CommentFragment extends Fragment {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
+                                    Toast.makeText(getContext(), "Send success", Toast.LENGTH_SHORT).show();
                                     commentEdt.setText("");
                                 } else {
                                     Toast.makeText(getContext(), "Failed to comment", Toast.LENGTH_SHORT).show();
@@ -128,15 +131,21 @@ public class CommentFragment extends Fragment {
                     return;
 
                 CommentModel commentModel = null;
-                for (QueryDocumentSnapshot snapshot : value) {
+                Log.e("mlistComment", mlistComment.size() + "");
+                mlistComment.clear();
+                for (DocumentSnapshot snapshot : value) {
 
                     Log.e("snapshot commentFragment", snapshot.getData().toString());
-                    Log.e("snapshot value", value.size() + "" );
+                    Log.e("snapshot value", value.size() + "");
                     commentModel = snapshot.toObject(CommentModel.class);
                     mlistComment.add(commentModel);
                     Log.e("mlistComment", mlistComment.size() + "");
+
                 }
                 commentAdapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(0); // Di chuyển đến vị trí đầu tiên
+
+                Log.e("mlistComment_1", mlistComment.size() + "");
             }
         });
     }
@@ -149,7 +158,12 @@ public class CommentFragment extends Fragment {
         mUser = FirebaseAuth.getInstance().getCurrentUser();
 
         mlistComment = new ArrayList<>();
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(layoutManager);
+        layoutManager.setStackFromEnd(true); // Hiển thị dữ liệu từ dưới lên
+
         commentAdapter = new CommentAdapter(getContext(), mlistComment);
         recyclerView.setAdapter(commentAdapter);
 
