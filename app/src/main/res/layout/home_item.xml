@@ -100,19 +100,22 @@
         android:paddingEnd="8dp"
         android:text="@string/_100_likes"
         android:textStyle="bold" />
-    <androidx.recyclerview.widget.RecyclerView
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/view_all_comment"
         android:layout_below="@id/likeCountTv"
-        android:id="@+id/commentRecyclerView"/>
+        android:padding="8dp"
+        android:visibility="gone"
+        android:id="@+id/commentTV"/>
 
 
     <LinearLayout
         android:id="@+id/commentLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_below="@id/commentRecyclerView"
+        android:visibility=""
+        android:layout_below="@id/commentTV"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 

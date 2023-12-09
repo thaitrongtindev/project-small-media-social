@@ -37,4 +37,5 @@
     <string name="search_here">Search here...</string>
     <string name="status">Status</string>
     <string name="unfollow">UnFollow</string>
+    <string name="view_all_comment">View all comment</string>
 </resources>

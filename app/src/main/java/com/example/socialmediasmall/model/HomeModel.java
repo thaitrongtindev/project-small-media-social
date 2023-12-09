@@ -15,18 +15,18 @@ public class HomeModel {
     private String uid;
     private String description, id;
     private List<String> likes;
-    private List<String> comments;
+
+
 
     public HomeModel() {
     }
 
-    public HomeModel(String name, Date timestamp, String profileImage, String imageUrl, String uid, List<String> comments, String description, String id, List<String> likes) {
+    public HomeModel(String name, Date timestamp, String profileImage, String imageUrl, String uid,  String description, String id, List<String> likes) {
         this.name = name;
         this.timestamp = timestamp;
         this.profileImage = profileImage;
         this.imageUrl = imageUrl;
         this.uid = uid;
-        this.comments = comments;
         this.description = description;
         this.id = id;
         this.likes = likes;
@@ -72,13 +72,6 @@ public class HomeModel {
         this.uid = uid;
     }
 
-    public List<String> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<String> comments) {
-        this.comments = comments;
-    }
 
     public String getDescription() {
         return description;

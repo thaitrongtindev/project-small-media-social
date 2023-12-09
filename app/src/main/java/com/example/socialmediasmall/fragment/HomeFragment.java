@@ -1,5 +1,6 @@
 package com.example.socialmediasmall.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -7,6 +8,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.socialmediasmall.R;
@@ -54,6 +59,7 @@ public class HomeFragment extends Fragment {
     private DocumentReference reference;
     private List<String> mListLikes;
 
+    private  final  MutableLiveData<Integer> commentCount = new MutableLiveData<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -144,8 +150,26 @@ public class HomeFragment extends Fragment {
 
 
             }
+
+            @Override
+            public void setCommentCount(TextView textView) {
+                Activity activity = getActivity();
+
+                commentCount.observe((LifecycleOwner) activity, new Observer<Integer>() {
+                    @Override
+                    public void onChanged(Integer integer) {
+                        if (commentCount.getValue() == 0) {
+                            textView.setVisibility(View.GONE);
+                        } else
+                            textView.setVisibility(View.VISIBLE);
+                        textView.setText("Set all " + commentCount + "Comments");
+                    }
+                });
+
+            }
         });
     }
+
 
     private boolean isHomeModelExists(String homeModelId) {
         for (HomeModel model : mListHomeModels) {
@@ -224,11 +248,27 @@ public class HomeFragment extends Fragment {
                                                             homeModel.getProfileImage(),
                                                             homeModel.getImageUrl(),
                                                             homeModel.getUid(),
-                                                            homeModel.getComments(),
                                                             homeModel.getDescription(),
                                                             homeModel.getId(),
                                                             homeModel.getLikes()
+
                                                     ));
+                                                            //được sử dụng để lấy danh sách các comment từ Firestore.
+                                                    snapshot.getReference().collection("comments").get()
+                                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                    if (task.isSuccessful()){
+                                                                        int count = 0;
+                                                                        for (QueryDocumentSnapshot snapshot2 : task.getResult()) {
+                                                                            count++;
+                                                                        }
+                                                                        //comment count
+                                                                        commentCount.setValue(count);
+                                                                    }
+                                                                }
+                                                            });
+
                                                 }
 
                                             }

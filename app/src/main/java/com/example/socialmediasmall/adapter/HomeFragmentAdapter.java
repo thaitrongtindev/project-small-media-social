@@ -16,6 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -24,6 +26,10 @@ import com.example.socialmediasmall.interfaceListener.IOnPressed;
 import com.example.socialmediasmall.model.HomeModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -106,6 +112,8 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
         Log.e("Name",listHomeModel.get(position).getName() +"") ;
         Log.e("Uid", listHomeModel.get(position).getUid() +"");
         Log.e("Likes", listHomeModel.get(position).getLikes() + "");
+
+
     }
 
     @Override
@@ -115,14 +123,14 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
 
     public class HomeViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView usernameTv, timeTv, likeCountTv , descriptionTv;
+        private TextView usernameTv, timeTv, likeCountTv , descriptionTv, commentTV;
         private CircleImageView profileImage;
         private ImageButton likeBtn, commentBtn, shareBtn, commentSendBtn;
         private ImageView imageView;
         private CheckBox likeCheckbox;
         private EditText commentEdit;
         private LinearLayout commentLayout;
-        private RecyclerView commentRecyclerView;
+
         public HomeViewHolder(@NonNull View itemView) {
             super(itemView);
             usernameTv = itemView.findViewById(R.id.nameTv);
@@ -137,7 +145,9 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
             commentEdit = itemView.findViewById(R.id.commentEdit);
             commentSendBtn = itemView.findViewById(R.id.commentSendBtn);
             commentLayout = itemView.findViewById(R.id.commentLayout);
-            commentRecyclerView = itemView.findViewById(R.id.commentRecyclerView);
+            commentTV = itemView.findViewById(R.id.commentTV);
+
+            iOnPressed.setCommentCount(commentTV);
 
         }
 
