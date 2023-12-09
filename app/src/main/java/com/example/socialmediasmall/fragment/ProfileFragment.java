@@ -181,14 +181,16 @@ public class ProfileFragment extends Fragment {
             isMyProfile = false;
             // userUid: id cua user minh nhan vao ,(user (ban be))
             userUid = USER_ID;
-            myRef = FirebaseFirestore.getInstance().collection("Users")
-                    .document(userUid);//nguwoifi dung hiện tại
+//            myRef = FirebaseFirestore.getInstance().collection("Users")
+//                    .document(userUid);//nguwoifi dung hiện tại
             loadData();
         } else {
             isMyProfile = true;
             userUid = mUser.getUid();
         }
 
+
+        Log.e("isMyProfile", isMyProfile.toString() );
         if (isMyProfile) {
             edtProfileBtn.setVisibility(View.VISIBLE);
             followBtn.setVisibility(GONE);
@@ -226,7 +228,8 @@ public class ProfileFragment extends Fragment {
                     return;
                 }
                 followingListV2 = (List<String>) value.get("following"); // danh sách người đang theo dõi
-
+                // đây là danh sách : mà user mà mình search đang theo dôi
+                Log.e("followingListV2", followingListV2.toString());
             }
         });
     }
@@ -438,28 +441,36 @@ public class ProfileFragment extends Fragment {
 
 
                     String profileURL = value.getString("profileImage");
-                    Glide.with(getContext().getApplicationContext())
-                            .load(profileURL)
-                            .placeholder(R.drawable.ic_person)
-                            .timeout(6500)
-                            .listener(new RequestListener<Drawable>() {
-                                // lắng nghe ảnh được load thành công hay thấy bại
-                                @Override
-                                public boolean onLoadFailed(@Nullable GlideException e, @Nullable Object model, @NonNull Target<Drawable> target, boolean isFirstResource) {
-                                    return false;
-                                }
 
-                                @Override
-                                public boolean onResourceReady(@NonNull Drawable resource, @NonNull Object model, Target<Drawable> target, @NonNull DataSource dataSource, boolean isFirstResource) {
-                                    Bitmap bitmap = ((BitmapDrawable) resource).getBitmap();
-                                    // chuyển đổi resourse sang kiểu bitmap
+                    try {
 
-                                    storeProfileImage(bitmap, profileURL);
+                        assert getContext() != null;
 
-                                    return false;
-                                }
-                            })
-                            .into(profileImage);
+                        Glide.with(getContext().getApplicationContext())
+                                .load(profileURL)
+                                .placeholder(R.drawable.ic_person)
+                                .circleCrop()
+                                .listener(new RequestListener<Drawable>() {
+                                    @Override
+                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                        return false;
+                                    }
+
+                                    @Override
+                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+
+                                        Bitmap bitmap = ((BitmapDrawable) resource).getBitmap();
+                                        storeProfileImage(bitmap, profileURL);
+                                        return false;
+                                    }
+                                })
+                                .timeout(6500)
+                                .into(profileImage);
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
 
                     if (followersList.contains(mUser.getUid())) {

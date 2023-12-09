@@ -36,6 +36,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +78,10 @@ public class HomeFragment extends Fragment {
         //  reference = FirebaseFirestore.getInstance().collection("Posts").document(mUser.getUid());
         mListLikes = new ArrayList<>();
         mListHomeModels = new ArrayList<>();
-        homeFragmentAdapter = new HomeFragmentAdapter(mListHomeModels, getContext());
+        recyclerView.setHasFixedSize(true);
+
+        Log.e("mListHomeModels", mListHomeModels.size() + "");
+        homeFragmentAdapter = new HomeFragmentAdapter(mListHomeModels, getActivity());
         recyclerView.setAdapter(homeFragmentAdapter);
 
         loadDatatFromFirebase();
@@ -85,7 +89,8 @@ public class HomeFragment extends Fragment {
         homeFragmentAdapter.onPressed(new IOnPressed() {
             @Override
             public void onLiked(int position, String id, String uid, List<String> likes, boolean isChecked) {
-                 reference = FirebaseFirestore.getInstance()
+
+                reference = FirebaseFirestore.getInstance()
                         .collection("Users").document(uid)
                         .collection("Post Images")
                         .document(id);
@@ -110,11 +115,12 @@ public class HomeFragment extends Fragment {
                     return;
                 }
 
+
                 CollectionReference collectionReference = FirebaseFirestore.getInstance()
                         .collection("Users")
                         .document(uid).collection("Post Images")
                         .document(id)
-                        .collection("Comments");
+                        .collection("comments");
 
                 String commentID = collectionReference.document().getId();
                 Map<String, Object> map = new HashMap<>();
@@ -137,10 +143,17 @@ public class HomeFragment extends Fragment {
                         });
 
 
-
-
             }
         });
+    }
+
+    private boolean isHomeModelExists(String homeModelId) {
+        for (HomeModel model : mListHomeModels) {
+            if (model.getId().equals(homeModelId)) {
+                return true; // Trả về true nếu HomeModel đã tồn tại trong danh sách
+            }
+        }
+        return false; // Trả về false nếu HomeModel không tồn tại trong danh sách
     }
 
     private void loadDatatFromFirebase() {
@@ -148,8 +161,10 @@ public class HomeFragment extends Fragment {
 //                .collection("Users").document(mUser.getUid())
 //                .collection("Post Images");
 
-        DocumentReference reference = FirebaseFirestore.getInstance()
+        reference = FirebaseFirestore.getInstance()
                 .collection("Users").document(mUser.getUid());
+
+        Log.e("LOADĐATA", mUser.getUid().toString());
 
         CollectionReference collectionReference = FirebaseFirestore.getInstance().collection("Users");
         reference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -162,39 +177,69 @@ public class HomeFragment extends Fragment {
                 if (value == null) {
                     return;
                 }
-                HomeModel homeModel = (HomeModel) value.toObject(HomeModel.class);
-                List<String> uidList = (List<String>) value.get("follwing");
+                //   HomeModel homeModel = (HomeModel) value.toObject(HomeModel.class);
+                List<String> uidList = (List<String>) value.get("following"); // lấy list người dùng hiện tại đang theo dỗi người khác
+                Log.e("uidList", uidList.toString());
+
+                if (uidList == null) {
+                    return;
+                }
 
                 collectionReference.whereIn("uid", uidList)
                         .addSnapshotListener(new EventListener<QuerySnapshot>() {
                             @Override
                             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                                 if (error != null) {
-                                    Log.d("eror", error.getMessage());
+                                    Log.e("eror", error.getMessage());
                                 }
-                                for (QueryDocumentSnapshot snapshot : value) {
-                                    snapshot.getReference().collection("Post Images")
-                                            .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                                @Override
-                                                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                                                    for (QueryDocumentSnapshot snapshot1 : value) {
-                                                        HomeModel homeModel = snapshot.toObject(HomeModel.class);
-                                                        Log.e("Home", "" + homeModel.getName());
-                                                        mListHomeModels.add(new HomeModel(homeModel.getName(),
-                                                                homeModel.getTimestamp(),
-                                                                homeModel.getProfileImage(),
-                                                                homeModel.getImageUrl(),
-                                                                homeModel.getUid(),
-                                                                homeModel.getComments(),
-                                                                homeModel.getDescription(),
-                                                                homeModel.getId(),
-                                                                homeModel.getLikes()
-                                                        ));
-                                                    }
-                                                    homeFragmentAdapter.notifyDataSetChanged();
 
+                                for (QueryDocumentSnapshot snapshot : value) {
+                                    snapshot.getReference().collection("Post Images").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                                            //  Log.e("eror", error.getMessage());
+                                            if (error != null) {
+                                                Log.e("eror", error.getMessage());
+                                            }
+                                            if (value == null) {
+                                                return;
+                                            }
+                                            //  mListHomeModels.clear();
+
+
+//                                            if (mListHomeModels.size() == 0) {
+//                                                mListHomeModels.clear();
+//                                            } // Xóa danh sách hiện tại trước khi thêm dữ liệu mới
+                                            Log.e("Home1", "" + mListHomeModels.size());
+                                            for (QueryDocumentSnapshot snapshot1 : value) {
+                                                if (!snapshot1.exists())
+                                                    return;
+
+                                                System.out.println(snapshot1.getData());
+                                                //    Log.e("Snapshot1",snapshot1.getData().toString() );
+                                                HomeModel homeModel = snapshot1.toObject(HomeModel.class);
+                                                if (!isHomeModelExists(homeModel.getId())) {
+                                                    mListHomeModels.add(new HomeModel(homeModel.getName(),
+                                                            homeModel.getTimestamp(),
+                                                            homeModel.getProfileImage(),
+                                                            homeModel.getImageUrl(),
+                                                            homeModel.getUid(),
+                                                            homeModel.getComments(),
+                                                            homeModel.getDescription(),
+                                                            homeModel.getId(),
+                                                            homeModel.getLikes()
+                                                    ));
                                                 }
-                                            });
+
+                                            }
+
+                                            Log.e("Home2", "" + mListHomeModels.size());
+
+                                            homeFragmentAdapter.notifyDataSetChanged();
+
+                                        }
+
+                                    });
                                 }
                             }
                         });

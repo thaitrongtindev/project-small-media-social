@@ -3,6 +3,7 @@ package com.example.socialmediasmall.adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.hardware.lights.LightState;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,6 +64,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
 
         List<String> likes = listHomeModel.get(position).getLikes();
         int count = likes.size();
+        Log.e("count", ""+count);
         if (count == 0) {
             holder.likeCountTv.setVisibility(View.GONE);
         } else if (count == 1){
@@ -99,6 +101,11 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
                 listHomeModel.get(position).getUid(),
                 listHomeModel.get(position).getLikes())
         ;
+        Log.e("Posistion", position + "" );
+        Log.e("ID", listHomeModel.get(position).getId() + "");
+        Log.e("Name",listHomeModel.get(position).getName() +"") ;
+        Log.e("Uid", listHomeModel.get(position).getUid() +"");
+        Log.e("Likes", listHomeModel.get(position).getLikes() + "");
     }
 
     @Override
@@ -115,6 +122,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
         private CheckBox likeCheckbox;
         private EditText commentEdit;
         private LinearLayout commentLayout;
+        private RecyclerView commentRecyclerView;
         public HomeViewHolder(@NonNull View itemView) {
             super(itemView);
             usernameTv = itemView.findViewById(R.id.nameTv);
@@ -126,15 +134,14 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
             shareBtn = itemView.findViewById(R.id.shareBtn);
             imageView = itemView.findViewById(R.id.imageView);
             descriptionTv = itemView.findViewById(R.id.descTv);
-
             commentEdit = itemView.findViewById(R.id.commentEdit);
             commentSendBtn = itemView.findViewById(R.id.commentSendBtn);
             commentLayout = itemView.findViewById(R.id.commentLayout);
+            commentRecyclerView = itemView.findViewById(R.id.commentRecyclerView);
 
         }
 
         public void clickListener(int position, String id, String name, String uid, List<String> mListLikes) {
-
             commentBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -155,8 +162,6 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
                 public void onClick(View view) {
                     String comment = commentEdit.getText().toString();
                     iOnPressed.onComment(position, id, uid,comment, commentLayout, commentEdit);
-
-
                 }
             });
         }

@@ -150,8 +150,8 @@ public class SearchFragment extends Fragment  {
                 mListUser.clear();
                 for (QueryDocumentSnapshot snapshot : value) {
                     User users = snapshot.toObject(User.class);
-                    Log.e("User", users.getEmail());
-                    Log.e("LítUser", mListUser.toString());
+                  //  Log.e("User", users.getEmail());
+                  //  Log.e("LítUser", mListUser.toString());
                     mListUser.add(users);
 
                 }
