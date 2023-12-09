@@ -7,12 +7,14 @@ import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
+import com.example.socialmediasmall.fragment.CommentFragment;
 import com.example.socialmediasmall.fragment.CreateAccountFragment;
 import com.example.socialmediasmall.fragment.LoginFragment;
 
 public class ReplacerActivity extends AppCompatActivity {
 
     private FrameLayout frameLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,7 +22,12 @@ public class ReplacerActivity extends AppCompatActivity {
 
         frameLayout = findViewById(R.id.framelayout);
 
-        setFragment(new LoginFragment());
+        boolean isComment = getIntent().getBooleanExtra("isComment", false);
+        if (isComment) {
+            setFragment(new CommentFragment());
+        } else {
+            setFragment(new LoginFragment());
+        }
     }
 
     public void setFragment(Fragment fragment) {
@@ -29,6 +36,14 @@ public class ReplacerActivity extends AppCompatActivity {
 
         if (fragment instanceof CreateAccountFragment) {
             fragmentTransaction.addToBackStack(null);
+        }
+        if (fragment instanceof CommentFragment) {
+            String id = getIntent().getStringExtra("id");
+            String uid = getIntent().getStringExtra("uid");
+            Bundle bundle = new Bundle();
+            bundle.putString("id", id);
+            bundle.putString("uid", uid);
+            fragment.setArguments(bundle);
         }
         fragmentTransaction.replace(frameLayout.getId(), fragment);
         fragmentTransaction.commit();

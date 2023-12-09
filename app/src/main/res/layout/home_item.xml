@@ -110,35 +110,5 @@
         android:id="@+id/commentTV"/>
 
 
-    <LinearLayout
-        android:id="@+id/commentLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility=""
-        android:layout_below="@id/commentTV"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/commentEdit"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_below="@id/likeCountTv"
-            android:layout_margin="6dp"
-            android:background="@drawable/text_box"
-            android:hint="Type your comment"
-            android:padding="12dp" />
-
-    <ImageButton
-        android:id="@+id/commentSendBtn"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginEnd="10dp"
-        android:layout_below="@id/likeCountTv"
-        android:background="@drawable/ic_send_v1" />
-
-    </LinearLayout>
-
 
 </RelativeLayout>

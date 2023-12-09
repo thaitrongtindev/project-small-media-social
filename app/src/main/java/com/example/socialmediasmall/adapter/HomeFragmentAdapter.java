@@ -1,6 +1,8 @@
 package com.example.socialmediasmall.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.lights.LightState;
 import android.util.Log;
@@ -22,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.socialmediasmall.R;
+import com.example.socialmediasmall.ReplacerActivity;
 import com.example.socialmediasmall.interfaceListener.IOnPressed;
 import com.example.socialmediasmall.model.HomeModel;
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,11 +46,11 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
 
 
     private List<HomeModel> listHomeModel;
-    private Context context;
+    private Activity context;
 
     private IOnPressed iOnPressed;
 
-    public HomeFragmentAdapter(List<HomeModel> listHomeModel, Context context) {
+    public HomeFragmentAdapter(List<HomeModel> listHomeModel, Activity context) {
         this.listHomeModel = listHomeModel;
         this.context = context;
     }
@@ -125,11 +128,10 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
 
         private TextView usernameTv, timeTv, likeCountTv , descriptionTv, commentTV;
         private CircleImageView profileImage;
-        private ImageButton likeBtn, commentBtn, shareBtn, commentSendBtn;
+        private ImageButton  commentBtn, shareBtn;
         private ImageView imageView;
         private CheckBox likeCheckbox;
-        private EditText commentEdit;
-        private LinearLayout commentLayout;
+
 
         public HomeViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -142,9 +144,6 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
             shareBtn = itemView.findViewById(R.id.shareBtn);
             imageView = itemView.findViewById(R.id.imageView);
             descriptionTv = itemView.findViewById(R.id.descTv);
-            commentEdit = itemView.findViewById(R.id.commentEdit);
-            commentSendBtn = itemView.findViewById(R.id.commentSendBtn);
-            commentLayout = itemView.findViewById(R.id.commentLayout);
             commentTV = itemView.findViewById(R.id.commentTV);
 
             iOnPressed.setCommentCount(commentTV);
@@ -155,9 +154,14 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
             commentBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (commentLayout.getVisibility() == View.GONE) {
-                        commentLayout.setVisibility(View.VISIBLE);
-                    }
+
+                    Intent intent = new Intent(context, ReplacerActivity.class);
+                    intent.putExtra("id", id);
+                    intent.putExtra("uid", uid);
+                    intent.putExtra("isComment", true);
+
+                    context.startActivity(intent);
+
                 }
             });
             likeCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -167,13 +171,6 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
                 }
             });
 
-            commentSendBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    String comment = commentEdit.getText().toString();
-                    iOnPressed.onComment(position, id, uid,comment, commentLayout, commentEdit);
-                }
-            });
         }
     }
 

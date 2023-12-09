@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.socialmediasmall.R;
+import com.example.socialmediasmall.ReplacerActivity;
 import com.example.socialmediasmall.adapter.HomeFragmentAdapter;
 import com.example.socialmediasmall.interfaceListener.IOnPressed;
 import com.example.socialmediasmall.model.HomeModel;
@@ -59,7 +60,7 @@ public class HomeFragment extends Fragment {
     private DocumentReference reference;
     private List<String> mListLikes;
 
-    private  final  MutableLiveData<Integer> commentCount = new MutableLiveData<>();
+    private final MutableLiveData<Integer> commentCount = new MutableLiveData<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -114,42 +115,6 @@ public class HomeFragment extends Fragment {
                 reference.update(map);
             }
 
-            @Override
-            public void onComment(int position, String id, String uid, String comment, LinearLayout commentLayout, EditText commentEdit) {
-                if (comment.isEmpty() != comment.equals(" ")) {
-                    Toast.makeText(getContext(), "Can not send empty", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-
-                CollectionReference collectionReference = FirebaseFirestore.getInstance()
-                        .collection("Users")
-                        .document(uid).collection("Post Images")
-                        .document(id)
-                        .collection("comments");
-
-                String commentID = collectionReference.document().getId();
-                Map<String, Object> map = new HashMap<>();
-                map.put("uid", mUser.getUid());
-                map.put("comment", comment);
-                map.put("commentID", commentID);
-                map.put("postID", id);
-
-                collectionReference.document(commentID)
-                        .set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    commentEdit.setText("");
-                                    commentLayout.setVisibility(View.GONE);
-                                } else {
-                                    Toast.makeText(getContext(), "Failed to comment", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-
-
-            }
 
             @Override
             public void setCommentCount(TextView textView) {
@@ -253,12 +218,12 @@ public class HomeFragment extends Fragment {
                                                             homeModel.getLikes()
 
                                                     ));
-                                                            //được sử dụng để lấy danh sách các comment từ Firestore.
+                                                    //được sử dụng để lấy danh sách các comment từ Firestore.
                                                     snapshot.getReference().collection("comments").get()
                                                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                    if (task.isSuccessful()){
+                                                                    if (task.isSuccessful()) {
                                                                         int count = 0;
                                                                         for (QueryDocumentSnapshot snapshot2 : task.getResult()) {
                                                                             count++;
