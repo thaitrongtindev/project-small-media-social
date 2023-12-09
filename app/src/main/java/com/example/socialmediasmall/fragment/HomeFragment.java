@@ -80,7 +80,6 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         init(view);
-
         //document reference
         //  reference = FirebaseFirestore.getInstance().collection("Posts").document(mUser.getUid());
         mListLikes = new ArrayList<>();
@@ -127,7 +126,7 @@ public class HomeFragment extends Fragment {
                             textView.setVisibility(View.GONE);
                         } else
                             textView.setVisibility(View.VISIBLE);
-                        textView.setText("Set all " + commentCount + "Comments");
+                        textView.setText("Set all " + commentCount.getValue() + " Comments");
                     }
                 });
 
@@ -219,21 +218,23 @@ public class HomeFragment extends Fragment {
 
                                                     ));
                                                     //được sử dụng để lấy danh sách các comment từ Firestore.
-                                                    snapshot.getReference().collection("comments").get()
+                                                    snapshot1.getReference().collection("comments").get()
                                                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                                     if (task.isSuccessful()) {
                                                                         int count = 0;
                                                                         for (QueryDocumentSnapshot snapshot2 : task.getResult()) {
+                                                                            Log.e("snapshot2 HOME", snapshot2.getData().toString() );
                                                                             count++;
                                                                         }
                                                                         //comment count
                                                                         commentCount.setValue(count);
+                                                                        Log.e("commentCount", commentCount.getValue().toString() );
+
                                                                     }
                                                                 }
                                                             });
-
                                                 }
 
                                             }

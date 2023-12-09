@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.socialmediasmall.R;
 import com.example.socialmediasmall.model.CommentModel;
 
@@ -29,13 +30,18 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     @NonNull
     @Override
     public CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-       View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_item, parent, false);
         return new CommentViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
 
+        Glide.with(context).load(mListComment.get(position)
+                        .getProfileImageUrl())
+                .into(holder.profileImage);
+        holder.nameTV.setText(mListComment.get(position).getName());
+        holder.commentTV.setText(mListComment.get(position).getComment());
     }
 
     @Override
@@ -47,6 +53,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
         private TextView nameTV, commentTV;
         private CircleImageView profileImage;
+
         public CommentViewHolder(@NonNull View itemView) {
             super(itemView);
             profileImage = itemView.findViewById(R.id.profileImage);

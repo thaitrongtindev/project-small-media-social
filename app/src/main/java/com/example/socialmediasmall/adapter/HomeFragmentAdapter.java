@@ -73,7 +73,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
 
         List<String> likes = listHomeModel.get(position).getLikes();
         int count = likes.size();
-        Log.e("count", ""+count);
+        Log.e("countlinke", ""+count);
         if (count == 0) {
             holder.likeCountTv.setVisibility(View.GONE);
         } else if (count == 1){
